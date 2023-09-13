@@ -1,0 +1,8 @@
+.card img{
+    height: 350px; /* Establece la altura fija para las tarjetas */
+    width: auto;
+}
+.card{
+    height: 600px;
+    width: auto;
+}

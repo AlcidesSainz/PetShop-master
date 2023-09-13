@@ -106,6 +106,60 @@
 
             $con->close();
         }
+        function obtenerIdCategoria($nombreCategoria)
+        {
+            $con = conectarBD();
+            $sql = "SELECT idcategorias_productos FROM categorias_productos WHERE categoria = ?";
+            $stmt = $con->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param("s", $nombreCategoria);
+                $stmt->execute();
+                $stmt->bind_result($id);
+                $stmt->fetch();
+                $stmt->close();
+                $con->close();
+                return $id;
+            } else {
+                return null; // Maneja el error adecuadamente en tu aplicación
+            }
+        }
+        function obtenerIdProveedor($nombreProveedor)
+        {
+            $con = conectarBD();
+            $sql = "SELECT idproveedor  FROM proveedor WHERE nombreProveedor = ?";
+            $stmt = $con->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param("s", $nombreProveedor);
+                $stmt->execute();
+                $stmt->bind_result($id);
+                $stmt->fetch();
+                $stmt->close();
+                $con->close();
+                return $id;
+            } else {
+                return null; // Maneja el error adecuadamente en tu aplicación
+            }
+        }
+        function obtenerIdMascota($tipoMascota)
+        {
+            $con = conectarBD();
+            $sql = "SELECT idtipoMascota  FROM tipomascota WHERE mascota = ?";
+            $stmt = $con->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param("s", $tipoMascota);
+                $stmt->execute();
+                $stmt->bind_result($id);
+                $stmt->fetch();
+                $stmt->close();
+                $con->close();
+                return $id;
+            } else {
+                return null; // Maneja el error adecuadamente en tu aplicación
+            }
+        }
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Captura los datos del formulario
@@ -113,14 +167,14 @@
             $precio = $_POST["precio"];
             $cantidad = $_POST["cantidad"];
             $categoria = $_POST["categoria"];
-            $proveedor = $_POST["proveedor"];
-            $mascota = $_POST["mascota"];
+            $nombreProveedor  = $_POST["proveedor"];
+            $tipoMascota = $_POST["mascota"];
 
             $imagenNombre = $_FILES['imagen']['name'];
             $imagenTmp = $_FILES['imagen']['tmp_name'];
             $imagenTipo = $_FILES['imagen']['type'];
 
-            $directorioImagenes = 'img/products';
+            $directorioImagenes = 'img/products/';
 
             if (!empty($imagenNombre)) {
                 $imagenNombre = uniqid() . '_' . $imagenNombre;
@@ -131,9 +185,10 @@
             }
 
             // Llama a la función para insertar el producto
-            $mensaje = insertarProducto($producto, $precio, $cantidad, $categoria, $proveedor, $mascota, $imagenNombre);
+            $mensaje = insertarProducto($producto, $precio, $cantidad, $categoria, $nombreProveedor, $tipoMascota, $imagenNombre);
 
-            echo $mensaje;
+            header("Location: ingresarProducto.php"); // Cambia "confirmacion.php" al nombre de tu página de confirmación
+            exit;
         }
         ?>
 
@@ -153,7 +208,8 @@
                 <?php
                 $categorias = obtenerCategorias();
                 foreach ($categorias as $categoria) {
-                    echo '<option value="' . $categoria . '">' . $categoria . '</option>';
+                    $categoriaId = obtenerIdCategoria($categoria);
+                    echo '<option value="' . $categoriaId . '">' . $categoria . '</option>';
                 }
                 ?>
             </select>
@@ -162,7 +218,8 @@
                 <?php
                 $nombresProveedores = obtenerNombresProveedores();
                 foreach ($nombresProveedores as $nombreProveedor) {
-                    echo '<option value="' . $nombreProveedor . '">' . $nombreProveedor . '</option>';
+                    $proveedorId = obtenerIdProveedor($nombreProveedor);
+                    echo '<option value="' . $proveedorId . '">' . $nombreProveedor . '</option>';
                 }
                 ?>
             </select>
@@ -171,7 +228,8 @@
                 <?php
                 $tipoMascotas = obtenerTipoMascota();
                 foreach ($tipoMascotas as $tipoMascota) {
-                    echo '<option value="' . $tipoMascota . '">' . $tipoMascota . '</option>';
+                    $mascotaId = obtenerIdMascota($tipoMascota);
+                    echo '<option value="' . $mascotaId . '">' . $tipoMascota . '</option>';
                 }
                 ?>
             </select>
