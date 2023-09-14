@@ -163,7 +163,7 @@ function obtenerNombreMascota($idMascota)
             <?php endforeach; ?>
         </div>
     </div>
-    
+
 </body>
 
 </html>

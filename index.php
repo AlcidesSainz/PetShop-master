@@ -1,3 +1,7 @@
+<?php
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,10 +39,10 @@
                 Productos
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="productos.php">Productos para perros</a></li>
-                <li><a class="dropdown-item" href="productos.php">Productos para gatos</a></li>
-                <li><a class="dropdown-item" href="productos.php">Productos para peces</a></li>
-                <li><a class="dropdown-item" href="productos.php">Productos para roedores</a></li>
+                <li><a class="dropdown-item" href="productos.php?categoria=perro">Perros</a></li>
+                <li><a class="dropdown-item" href="productos.php">Gatos</a></li>
+                <li><a class="dropdown-item" href="productos.php">Peces</a></li>
+                <li><a class="dropdown-item" href="productos.php">Roedores</a></li>
                 <li>
                   <hr class="dropdown-divider" />
                 </li>
@@ -53,6 +57,12 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="#">Contactanos</a>
             </li>
+            <!-- Verifica si el usuario es administrador antes de mostrar el enlace -->
+
+            <?php  // En index.php
+            if (isset($_GET["esAdmin"]) && $_GET["esAdmin"] === "true") :  ?>
+              <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active" aria-current="page">Ingresar Producto</a></li>
+            <?php endif; ?>
           </ul>
 
           <form class="d-flex" role="search">

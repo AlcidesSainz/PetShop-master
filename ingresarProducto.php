@@ -198,7 +198,7 @@
                 <input type="text" class="form-control" placeholder="Producto" required name="producto" id="producto" />
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Precio" required name="precio" id="precio" />
+                <input type="text" class="form-control" placeholder="Precio" required name="precio" id="precio" step="0.01" />
             </div>
             <div class="form-group">
                 <input type="number" class="form-control" placeholder="Cantidad" required name="cantidad" id="cantidad" />

@@ -62,7 +62,6 @@
 
 <?php
 $loginSuccess = false; // Variable para verificar si el inicio de sesión fue exitoso
-
 // Verificar si se enviaron datos del formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $correo = $_POST["correo"];
@@ -85,6 +84,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if ($result->num_rows == 1) {
     // El usuario ha iniciado sesión con éxito
     $loginSuccess = true;
+
+    // Obtener el valor de esAdmin para el usuario
+    $row = $result->fetch_assoc();
+    $esAdmin = $row['esAdmin'];
+
+    if ($esAdmin) {
+      // El usuario es administrador, redirige a la página de administrador
+      header("Location: index.php?esAdmin=true"); // Redirecciona a index.php con la variable en la URL
+ 
+      exit();
+    } else {
+      // El usuario no es administrador, redirige a la página de usuario regular
+   
+      header("Location: index.php");
+      exit();
+    }
   }
 
   // Cerrar la conexión a la base de datos
