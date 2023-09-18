@@ -1,3 +1,44 @@
+<?php
+// Verifica si se envió una solicitud POST
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verifica si se envió el ID del producto
+    if (isset($_POST["productIdList"])) {
+        // Obtiene el ID del producto desde la solicitud AJAX
+        $productIdList = $_POST["productIdList"];
+
+        // Llama a la función obtenerListProducto y obtiene los datos del producto
+        $datosProductos = obtenerListProducto($productIdList);
+
+        // Devuelve los datos del producto como una respuesta AJAX en formato JSON
+        // header('Content-Type: application/json');
+        echo json_encode($datosProductos);
+        exit; // Detiene la ejecución del script para evitar que se agregue HTML adicional
+    } else {
+        // Maneja el caso en que no se proporcionó un ID de producto
+        echo "No hay productos en el carrito de compra.";
+    }
+}
+
+// Función para obtener datos de un producto (ejemplo)
+function obtenerListProducto($productiIdList)
+{
+    $con = conectarBD();
+    $sql = "SELECT idproducto, nombre_producto, categoria, tipomascota, precio,stock, imagen FROM producto WHERE idproducto in {$productiIdList}";
+    $result = $con->query($sql);
+
+    $productos = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $productos[] = $row;
+        }
+    }
+
+    $con->close();
+
+    return $productos;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,13 +48,13 @@
     <title>Catalogo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/styleProductos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="styles/styleProductos.css">
 
 </head>
-<?php
 
+<?php
 
 function conectarBD()
 {
@@ -34,7 +75,7 @@ function conectarBD()
 function obtenerProductos()
 {
     $con = conectarBD();
-    $sql = "SELECT nombre_producto, categoria, tipomascota, precio,stock, imagen FROM producto";
+    $sql = "SELECT idproducto, nombre_producto, categoria, tipomascota, precio,stock, imagen FROM producto";
     $result = $con->query($sql);
 
     $productos = [];
@@ -48,6 +89,7 @@ function obtenerProductos()
 
     return $productos;
 }
+
 
 // Obtén la lista de productos
 $productos = obtenerProductos();
@@ -163,14 +205,29 @@ function obtenerStockProducto($idProducto)
                     </form>
 
                     <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
-                    <a href="#"><img class="img-icon img-fluid" data-bs-toggle="modal" data-bs-target="#myModal2"
-                            src="ico/cart2.svg" alt="" /></a>
+                    <a href="#" id="cartButton"><img class="img-icon img-fluid" src="ico/cart2.svg" alt="" /></a>
                 </div>
             </div>
         </nav>
     </div>
     <!-- Sección Productos -->
     <div class="container">
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
+            id="confirmModal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="textConfirmlabel"></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="modal-btn-si">Si</button>
+                        <button type="button" class="btn btn-primary" id="modal-btn-no">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <?php foreach ($productos as $producto): ?>
                 <div class="col-3">
@@ -190,6 +247,7 @@ function obtenerStockProducto($idProducto)
                                 <?php echo number_format($producto['precio'], 2); ?>
                             </p>
                             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal"
+                                data-id="<?php echo ($producto['idproducto']); ?>"
                                 data-stock="<?php echo ($producto['stock']); ?>"
                                 data-price="<?php echo $producto['precio']; ?>"
                                 data-product-image="img/products/<?php echo $producto['imagen']; ?>">Comprar</a>
@@ -238,9 +296,11 @@ function obtenerStockProducto($idProducto)
                 </div>
                 <div class="modal-body">
                     <h5>Tu carrito de compras</h5>
+                    <input type="hidden" name="currentCart" id="currentCartHidden">
+
                     <ul id="cartList" class="list-group">
-                        <!-- Cart items will be added here -->
                     </ul>
+
                     <div class="row mt-2">
                         <div class="col-10 text-end ">
                             <p>Total: </p>
@@ -251,15 +311,139 @@ function obtenerStockProducto($idProducto)
                     </div>
                 </div>
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Comprar</button>
+                    <a href="carrito.php"><button id="cartBtnComprar" type="button"
+                            class="btn btn-primary">Comprar</button></a>
+
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+
     <!-- Agrega el script después del modal y antes de cerrar la etiqueta </body> -->
+
+    <script>
+        $(document).ready(function () {
+
+            $("#cartButton").click(function () {
+                debugger;
+                var currentCartHidden = $("#currentCartHidden").val().replace(/^,/, '');
+                var currentCartValues = currentCartHidden.split(","); //id-cant
+
+                if (currentCartValues[0] == undefined || currentCartValues[0] == '' || currentCartValues.length == 0) {
+                    $("#cartList").empty();
+                    var listItem = $(`<li>`).addClass("list-group-item");
+                    // Construye el contenido del <li> con los datos del producto
+                    var contenido = `
+                                <div class="alert alert-danger" role="alert">
+                                No tiene elementos de compra en tu carrito!!!
+                                </div>
+                            `;
+                    listItem.html(contenido);
+                    // Agrega el <li> a la lista <ul>
+                    $("#cartList").append(listItem);
+
+                    $("#myModal2").modal("show");
+
+                    HideShowCartBtnComprar(false);
+
+                    return false;
+                }
+
+                HideShowCartBtnComprar(true);
+
+                var productIdList = '(';
+
+                var currentCart = [];
+
+                $.each(currentCartValues, function (index, producto) {
+
+                    var productoid = producto.split('-')[0];
+                    if (productoid > 0) {
+
+                        productIdList += `${productoid},`;
+
+                        // Crea un objeto de producto y agrega sus propiedades
+                        var productoObj = {
+                            productoid: productoid, // ID del producto
+                            cantidad: parseInt(producto.split('-')[1]) // Cantidad como número entero
+                        };
+
+                        // Agrega el objeto de producto al arreglo de productos
+                        currentCart.push(productoObj);
+                    }
+                });
+
+                productIdList = productIdList.replace(/,$/, ")");
+
+                function buscarProductoPorId(productoid) {
+                    return currentCart.find(function (producto) {
+                        return producto.productoid === productoid;
+                    });
+                }
+
+                // Realizar la solicitud AJAX
+                $.ajax({
+                    type: "POST",
+                    url: "productos.php",
+                    data: { productIdList: productIdList }, // Envía el ID del producto al servidor
+                    success: function (response) {
+
+                        var productos = JSON.parse(response);
+
+                        // Limpia el contenido de la lista <ul> con jQuery
+                        $("#cartList").empty();
+                        var totalInCart = 0;
+
+                        // Itera a través de los productos y agrégalos a la lista con jQuery
+                        $.each(productos, function (index, producto) {
+                            var listItem = $(`<li id='liproducto_${producto.idproducto}'>`).addClass("list-group-item");
+
+                            // Busca la cantidad del producto por su ID en el arreglo currentCart
+                            var cantidadProducto = buscarProductoPorId(producto.idproducto).cantidad;
+
+                            // Construye el contenido del <li> con los datos del producto
+                            var contenido = `
+                                <div class="row media">
+                                <div class="col-sm-12 col-md-2 col-lg-2">
+                                    <img src="img/products/${producto.imagen}" class="align-self-start mr-3" alt="Imagen del producto" style="max-width: 50px;">
+                                    </div>
+                                    <div class="col-sm-12 col-md-10 col-lg-10 media-body d-flex align-items-left">
+                                        <div>
+                                            <h5 class="mt-0">${producto.nombre_producto}</h5>
+                                            <p>Precio: $${producto.precio}              Cantidad: ${cantidadProducto}</p>                                           
+                                            <p class="text-right">Subtotal: $${(producto.precio * cantidadProducto).toFixed(2)}</p>
+                                            <button class="btn btn-outline-danger pull-right deleteButton" data-subtotal="${producto.precio * cantidadProducto}" data-idproducto="${producto.idproducto}" style="marging-left:30px;" type="button">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            listItem.html(contenido);
+
+                            totalInCart += producto.precio * cantidadProducto;
+
+                            // Agrega el <li> a la lista <ul>
+                            $("#cartList").append(listItem);
+                        });
+
+                        $("#totalPriceInModal").text(`$${(totalInCart).toFixed(2)}`);
+
+                        $("#myModal2").modal("show");
+                    },
+                    error: function () {
+                        // Manejar errores si los hay
+                        alert("Hubo un error en la solicitud AJAX.");
+                    }
+                });
+            });
+        });
+
+    </script>
+
 
     <script>
 
@@ -267,6 +451,8 @@ function obtenerStockProducto($idProducto)
         let quantityInput = document.querySelector('.modal input[type="number"]');
         const productPriceInModal = document.getElementById('productPriceInModal');
         const productTotalInModal = document.getElementById('productTotalInModal');
+
+        let cart = [];
 
         // Función para calcular y mostrar el total del precio en el modal
 
@@ -323,64 +509,77 @@ function obtenerStockProducto($idProducto)
         let totalCompra = 0.00;
 
         document.addEventListener('DOMContentLoaded', function () {
-            // JavaScript
-            const cart = []; // Array to store selected products
+
+            // Función para agregar un producto al carrito
+            function addToCart(idproducto, cantidad) {
+                debugger;
+                // Agrega el producto seleccionado al array del carrito
+
+                var resultado = $.grep(cart, function (producto) {
+                    return producto.idproducto === idproducto;
+                });
+
+                if (resultado.length > 0) {
+                    for (var i = 0; i < cart.length; i++) {
+                        if (cart[i].idproducto === idproducto) {
+                            cart.splice(i, 1); // Elimina el elemento en la posición i
+                            break; // Rompe el bucle una vez que se elimina el elemento
+                        }
+                    }
+                }
+
+                cart.push({
+                    idproducto: idproducto,
+                    cantidad: cantidad
+                });
+
+                let productList = '';
+
+                $.each(cart, function (index, producto) {
+                    productList += `,${producto.idproducto}-${producto.cantidad}`;
+                });
+
+                $("#currentCartHidden").val(productList);
+            }
+
+            // Función para eliminar un producto del carrito
+            function removeFromCart(productName) {
+                debugger;
+                // Encuentra el índice del producto en el carrito
+                const index = cart.findIndex(product => product.nombre === productName);
+
+                // Si se encuentra el producto, elimínalo del carrito
+                if (index !== -1) {
+                    cart.splice(index, 1);
+                    displayCart();
+                    updateTotalPrice();
+                }
+            }
+
+
+            // Función para calcular y mostrar el total de la compra
             function updateTotalPrice() {
                 const totalPriceElement = document.getElementById('totalPriceInModal');
 
-                // Calcular el total del precio sumando los precios de los productos en el carrito
+                // Calcula el total sumando los precios de los productos en el carrito
                 let total = 0.00;
                 cart.forEach(function (product) {
                     total += product.precio;
                 });
 
-                // Actualizar el elemento HTML con el total calculado
+                // Actualiza el elemento HTML con el total calculado
                 totalPriceElement.textContent = `$${total.toFixed(2)}`;
-                console.log(totalPriceElement)
             }
-            // Function to add a product to the cart
-            function addToCart(productName, productPrice, productImage) {
-                // Add the selected product to the cart array
-                cart.push({
-                    nombre: productName,
-                    precio: productPrice,
-                    imagen: productImage
-                });
-                // Update the cart display
-                displayCart();
-            }
-            // Function to display the cart in myModal2
-            function displayCart() {
-                const cartList = document.getElementById('cartList');
-                cartList.innerHTML = ''; // Clear previous cart items
 
-                cart.forEach(function (product) {
-                    const cartItem = document.createElement('li');
-                    cartItem.className = 'list-group-item';
-                    console.log(product['imagen'])
-                    // Create the cart item content
-                    cartItem.innerHTML = `
-                <div class="row">
-                    <div class="col-2">
-                        <img src="${product['imagen']}" alt="Producto" class="img-fluid">
-                      
-                    </div>
-                    <div class="col-6">
-                        <p>${product['nombre']}</p>
-                        
-                    </div>
-                    <div class="col-4 text-end">
-                        <p>Precio: $${product['precio'].toFixed(2)}</p>
-                    </div>
-                </div>`;
-                    cartList.appendChild(cartItem);
-                });
-            }
 
 
             // Al abrir el modal, configura los datos del producto en el botón "Añadir al carrito"
             document.getElementById('myModal').addEventListener('show.bs.modal', function (event) {
+                debugger;
                 const button = event.relatedTarget;
+
+                const idproducto = $(button).attr("data-id");
+
                 const card = button.closest('.card');
                 const productName = card.querySelector('.card-title').textContent;
                 const productPrice = parseFloat(card.querySelector('.price').textContent.replace('Precio: $', ''));
@@ -389,18 +588,20 @@ function obtenerStockProducto($idProducto)
                 const productImage = button.getAttribute('data-product-image');
 
                 const addToCartBtn = document.getElementById('addToCartBtn');
+                addToCartBtn.setAttribute('data-product-idproducto', idproducto);
                 addToCartBtn.setAttribute('data-product-name', productName);
                 addToCartBtn.setAttribute('data-product-price', productPrice);
                 addToCartBtn.setAttribute('data-product-stock', productStock);
                 addToCartBtn.setAttribute('data-product-image', productImage);
                 console.log(`productImage: ${productImage}`);
 
-
             });
 
             // Agrega un evento clic al botón "Añadir al carrito" en el modal
             const addToCartBtn = document.getElementById('addToCartBtn');
             addToCartBtn.addEventListener('click', function () {
+
+                idproducto = addToCartBtn.getAttribute('data-product-idproducto');
                 productName = addToCartBtn.getAttribute('data-product-name');
                 productPrice = parseFloat(addToCartBtn.getAttribute('data-product-price'));
                 productStock = addToCartBtn.getAttribute('data-product-stock');
@@ -409,15 +610,13 @@ function obtenerStockProducto($idProducto)
                 quantity = parseInt(quantityInput.value);
                 console.log(`Cantidad ingresada: ${quantity}`);
 
-
                 if (quantity > productStock) {
                     alert('La cantidad ingresada es mayor que el stock disponible.');
 
                 } else {
                     // Agregar el producto al carrito la cantidad de veces especificada
-                    for (let i = 0; i < quantity; i++) {
-                        addToCart(productName, productPrice, productImage);
-                    }
+
+                    addToCart(idproducto, quantity);
 
                     // Cerrar el modal después de agregar los productos al carrito
                     $('#myModal').modal('hide');
@@ -428,10 +627,86 @@ function obtenerStockProducto($idProducto)
         });
 
 
+        $(document).delegate(".deleteButton", "click", function () {
+            debugger;
+            var idproducto = $(this).data("idproducto");
+            var subtotal = $(this).data("subtotal");
+
+            bootbox.confirm({
+                size: 'medium',
+                message: "Se dispone a eliminar un producto. Está seguro?",
+                callback: function (result) {
+                    if (result === true) {
+                        deleteProdcutoFromCart(idproducto, subtotal);
+                    }
+                },
+                error: function (error) {
+                    bootbox.alert({
+                        size: 'medium',
+                        title: 'Error al borrar ',
+                        message: '<div class="alert alert-dismissible alert-danger">' +
+                            '<strong>No se pudo eliminar el producto de la lista</strong>  ' + error.statusText +
+                            '</div>'
+                    });
+                }
+            });
+        });
+
+
+        var deleteProdcutoFromCart = function (idproducto, subtotal) {
+            debugger;
+
+            for (var i = 0; i < cart.length; i++) {
+                if (cart[i].idproducto == idproducto) {
+                    cart.splice(i, 1); // Elimina el elemento en la posición i
+                    break; // Rompe el bucle una vez que se elimina el elemento
+                }
+            }
+
+            let productList = '';
+
+            $.each(cart, function (index, producto) {
+                productList += `,${producto.idproducto}-${producto.cantidad}`;
+            });
+
+            $("#currentCartHidden").val(productList);
+
+            $(`#liproducto_${idproducto}`).hide(300);
+
+            var currentTotal = $("#totalPriceInModal").text().replace(/[^\d.]/g, '');
+
+            currentTotal -= subtotal;
+
+            $("#totalPriceInModal").text(`$${(currentTotal).toFixed(2)}`);
+
+            if (cart.length == 0) {
+                var listItem = $(`<li>`).addClass("list-group-item");
+                // Construye el contenido del <li> con los datos del producto
+                var contenido = `
+                                <div class="alert alert-danger" role="alert">
+                                No tiene elementos de compra en tu carrito!!!
+                                </div>
+                            `;
+                listItem.html(contenido);
+                // Agrega el <li> a la lista <ul>
+                $("#cartList").append(listItem);
+
+                HideShowCartBtnComprar(false);
+
+            }
+
+        }
+
+        var HideShowCartBtnComprar = (show) => {
+
+            $("#cartBtnComprar").hide();
+
+            if (show)
+                $("#cartBtnComprar").show();
+
+        }
+
     </script>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 </body>

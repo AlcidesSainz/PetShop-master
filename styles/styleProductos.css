@@ -1,9 +1,129 @@
-.card img{
-    height: 270px; /* Establece la altura fija para las tarjetas */
-    width: auto;
-    margin: 15px;
+.card img {
+  height: 270px; /* Establece la altura fija para las tarjetas */
+  width: auto;
+  margin: 15px;
 }
-.card{
-    height: 550px;
-    width: auto;
+.card {
+  height: 550px;
+  width: auto;
+}
+/* Estilo básico para el botón */
+.eliminar-button {
+  background-color: #ff0000; /* Color de fondo del botón */
+  color: #ffffff; /* Color del texto del botón */
+  border: none; /* Elimina el borde del botón */
+  padding: 10px 15px; /* Espaciado interno del botón */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse sobre el botón */
+  border-radius: 5px; /* Borde redondeado del botón */
+}
+
+/* Estilo para el icono X */
+.icon {
+  font-weight: bold; /* Hace que el texto sea más grueso para que parezca un icono */
+  margin-right: 5px; /* Espacio entre el icono y el texto */
+}
+#logo {
+  width: 40%;
+  margin-top: 30px;
+}
+.custom-nav {
+  font-size: 20px;
+  background-color: black;
+}
+
+.img-icon {
+  margin: 10px;
+  height: auto;
+  width: 30px;
+}
+#container-head1 {
+  background-color: rgb(81, 117, 99);
+  padding: 20px;
+}
+.circle-pets {
+  width: 220px;
+  height: 220px;
+}
+.no-link-style {
+  color: inherit; /* Utiliza el color heredado */
+  text-decoration: none; /* Sin subrayado */
+}
+
+.image-container img {
+  transition: transform 0.3s; /* Transición suave de aumento de escala */
+}
+
+.image-container a {
+  text-decoration: none;
+  color: #333;
+  transition: text-decoration 0.3s; /* Transición suave de subrayado */
+}
+
+.image-container:hover img {
+  transform: scale(1.1); /* Aumento de escala al pasar el mouse */
+}
+
+.image-container:hover a {
+  text-decoration: underline; /* Subrayado al pasar el mouse */
+}
+.container-categories p {
+  font-size: 20px;
+}
+.container-service {
+  margin: 55px;
+  border: 3px solid rgb(81, 117, 99);
+  padding: 50px;
+  height: auto;
+  width: 250px;
+}
+.container-servicios img {
+  width: 180px;
+  height: auto;
+}
+.container-service h4 {
+  margin-top: 30px;
+  color: rgb(81, 117, 99);
+}
+#container-brands img {
+  height: auto;
+  width: 300px;
+}
+#container-about-us {
+  background-color: rgb(81, 117, 99);
+  padding: 40px;
+}
+#container-about-us p {
+  font-size: 20px;
+}
+#mapa {
+  width: 90%;
+  height: 300px; /* Altura del mapa en píxeles */
+}
+.container-contact {
+  background-color: rgb(81, 117, 99);
+  font-size: 30px;
+  padding: 30px;
+}
+.container-contact svg {
+  height: auto;
+  width: 30px;
+}
+.hr-center {
+  width: 90%; /* Ajusta el ancho deseado del hr */
+  margin: 0 auto; /* Centra horizontalmente el hr en su contenedor */
+  border-style: solid; /* Cambia el estilo de la línea según tu preferencia (puedes usar dashed, dotted, etc.) */
+  border-width: 3px; /* Ancho de la línea */
+  border-color: #808080; /* Color de la línea */
+}
+.container-products img {
+  height: 320px;
+  width: auto;
+}
+.container-products .card {
+  width: 15rem;
+  height: 30rem;
+}
+
+#confirmModal {
+  z-index: 99999999;
 }
