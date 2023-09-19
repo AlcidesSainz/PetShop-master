@@ -45,8 +45,7 @@
 
             <?php // En index.php
             if (isset($_GET["esAdmin"]) && $_GET["esAdmin"] === "true"): ?>
-              <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active" aria-current="page">Ingresar
-                  Producto</a></li>
+              <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active" aria-current="page">Modo Administrador</a></li>
             <?php endif; ?>
           </ul>
 

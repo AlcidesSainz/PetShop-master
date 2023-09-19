@@ -24,10 +24,10 @@
                     <a class="nav-link" href="verProductos.php">Ver Productos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php">Añadir Cantidad a Producto </a>
+                    <a class="nav-link" href="anadirCant.php">Añadir Cantidad a Producto </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="asignarAdmin.php">Asignar Nuevo Admin</a>
+                    <a class="nav-link" href="asignarAdmin.php">Gestión Usuarios</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="index.php">Salir</a>
