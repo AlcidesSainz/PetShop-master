@@ -56,7 +56,7 @@
                     </form>
 
                     <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
-                  
+
                 </div>
             </div>
         </nav>
@@ -109,12 +109,13 @@
                 </div>
                 <div class="form-group">
                     <label for="email" class="font-weight-bold">Correo Electrónico:*</label>
-                    <input type="email" name="email" class="form-control" id="email" placeholder="Tu correo electrónico" required>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Tu correo electrónico"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="mensaje" class="font-weight-bold">Mensaje:*</label>
-                    <textarea class="form-control" name="mensaje" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"
-                        required></textarea>
+                    <textarea class="form-control" name="mensaje" id="mensaje" rows="4"
+                        placeholder="Escribe tu mensaje aquí" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block mt-3">Enviar Mensaje</button>
             </form>
@@ -154,6 +155,10 @@
                 <img src="img/logorm.png" style="width: 400px; height:auto; align-items: center;">
             </div>
         </div>
+    </div>
+    <div class="container container-comments mt-5 mb-5">
+        <h2>Comentarios de nuestros clientes:</h2>
+        <div id="comentarios" ></div>
     </div>
     <!-- Seccion Footer -->
     <div class="row text-center container-contact">
@@ -211,7 +216,33 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4tpSjs5JX1kBLs2J6lhjMyAu4zPitQP0&callback=inicializarMapa"
         async defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Realizar una solicitud AJAX para obtener los datos desde get_comments.php
+            debugger
+            $.ajax({
+                url: '/php_functions/get_comments.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Limpiar el contenido actual del elemento #comentarios
+                    $('#comentarios').empty();
+
+                    // Iterar a través de los datos y agregarlos al elemento #comentarios
+                    $.each(data, function (index, item) {
+                        $('#comentarios').append('<div class="container container-comments mt-5 mb-5" id="comentarios" style="background-color:#DCF3E9;"><p><strong>Nombre: </strong>' + item.nombre + '</p><p><strong>Comentario: </strong>"' + item.comentario + '"</p>        </div>');
+                    });
+                },
+                error: function (error) {
+                    console.error('Error al obtener los comentarios: ' + error.responseText);
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

@@ -249,7 +249,7 @@ function obtenerStockProducto($idProducto)
         </nav>
     </div>
     <!-- Sección Productos -->
-    <div class="container">
+    <div class="container  ">
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
             id="confirmModal">
             <div class="modal-dialog modal-sm">
@@ -407,11 +407,6 @@ function obtenerStockProducto($idProducto)
                                 <th class="text-end"><b><span id="totalCompraSpan"></span></b></th>
                             </tfoot>
                         </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal2"
-                        data-dismiss="modal">Salir</button>
-
                 </div>
             </div>
         </div>

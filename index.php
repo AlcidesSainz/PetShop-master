@@ -39,7 +39,7 @@
               <a class="nav-link active" aria-current="page" href="sobreNosotros.php">Sobre Nosotros</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Contáctanos</a>
+              <a class="nav-link active" aria-current="page" href="contacto.php">Contáctanos</a>
             </li>
             <!-- Verifica si el usuario es administrador antes de mostrar el enlace -->
 
@@ -87,46 +87,35 @@
           <img src="img/products/comida.png" class="card-img-top" alt="..." />
           <div class="card-body">
             <h5 class="card-title">Cat Chow</h5>
-            <p class="card-text">
-              Comida nutritiva y la favorita de los gatos
-            </p>
-            <a href="#" class="btn btn-primary">Ver el producto</a>
+
+            <a href="productos.php" class="btn btn-primary">Ir a la tienda</a>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <img src="img/products/comida.png" class="card-img-top" alt="..." />
+          <img src="img/products/6501263b81c5c_alimento-seco.png" class="card-img-top" alt="..." />
           <div class="card-body">
-            <h5 class="card-title">Cat Chow</h5>
-            <p class="card-text">
-              Comida nutritiva y la favorita de los gatos
-            </p>
-            <a href="#" class="btn btn-primary">Ver el producto</a>
+            <h5 class="card-title">Procan para Cachorro</h5>
+            <a href="productos.php" class="btn btn-primary">Ir la tienda</a>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <img src="img/products/comida.png" class="card-img-top" alt="..." />
+          <img src="img/products/6501de81efe80_pngegg.png" class="card-img-top" alt="..." />
           <div class="card-body">
-            <h5 class="card-title">Cat Chow</h5>
-            <p class="card-text">
-              Comida nutritiva y la favorita de los gatos
-            </p>
-            <a href="#" class="btn btn-primary">Ver el producto</a>
+            <h5 class="card-title">Whiskas</h5>
+            <a href="productos.php" class="btn btn-primary">Ir a la tienda</a>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <img src="img/products/comida.png" class="card-img-top" alt="..." />
+          <img src="img/products/65012a505d944_Adultos-original-pollo-PRONACA2.png" class="card-img-top" alt="..." />
           <div class="card-body">
-            <h5 class="card-title">Cat Chow</h5>
-            <p class="card-text">
-              Comida nutritiva y la favorita de los gatos
-            </p>
-            <a href="#" class="btn btn-primary">Ver el producto</a>
+            <h5 class="card-title">Pro Can para Adultos</h5>
+            <a href="productos.php" class="btn btn-primary">Ir a la tienda</a>
           </div>
         </div>
       </div>
