@@ -24,6 +24,9 @@
                     <a class="nav-link" href="verProductos.php">Ver Productos</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="index.php">Añadir Cantidad a Producto </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="asignarAdmin.php">Asignar Nuevo Admin</a>
                 </li>
                 <li class="nav-item">
@@ -42,6 +45,7 @@
                         <th>Stock</th>
                         <th>Proveedor</th>
                         <th>Tipo de Mascota</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,12 +72,57 @@
                     { "data": "precio" },
                     { "data": "stock" },
                     { "data": "proveedor" },
-                    { "data": "tipomascota" }
+                    { "data": "mascota" },
+                    {
+                        // Columna de acciones con botón de eliminar
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return '<button class="btn btn-danger eliminar-btn" data-id="' + row.idproducto + '">x</button>';
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {
+                        // Asigna un identificador a la columna de acciones
+                        "targets": -1,
+                        "className": "acciones"
+                    }
                 ]
             });
         });
+        // Agrega un evento para manejar el clic en el botón de eliminar
+        $('#tablaProductos').on('click', '.eliminar-btn', function () {
+            debugger
+            var idProducto = $(this).data('id'); // Obtiene el ID del producto del atributo data-id
+
+            // Confirma con el usuario si realmente desea eliminar el producto
+            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                // Realiza la acción de eliminación enviando una solicitud AJAX al servidor
+                // Realiza la acción de eliminación enviando una solicitud AJAX al servidor
+                $.ajax({
+                    url: '/php_functions/eliminar_producto.php', // Corregir la URL
+                    type: 'POST',
+                    data: { id: idProducto }, // Envía el ID del producto al servidor
+                    success: function (response) {
+                        // Maneja la respuesta del servidor, por ejemplo, recargar la tabla
+                        if (response.success) {
+                            // Actualiza la tabla o realiza alguna otra acción después de la eliminación
+                            // Puedes recargar la tabla para que refleje los cambios
+                            $('#tablaProductos').DataTable().ajax.reload();
+                        } else {
+                            alert('Error al eliminar el producto.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error de comunicación con el servidor.');
+                    }
+                });
+
+            }
+        });
 
     </script>
+
 </body>
 
 </html>

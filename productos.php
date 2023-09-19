@@ -233,7 +233,7 @@ function obtenerStockProducto($idProducto)
                             <a class="nav-link active" aria-current="page" href="sobreNosotros.php">Sobre Nosotros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="contacto.php">Contactanos</a>
+                            <a class="nav-link active" aria-current="page" href="contacto.php">Contáctanos</a>
                         </li>
                     </ul>
 
