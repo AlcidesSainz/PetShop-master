@@ -1,3 +1,6 @@
+body{
+    font-family: "Comic Sans MS", sans-serif;
+}
 #logo {
   width: 40%;
   margin-top: 30px;
@@ -78,24 +81,62 @@
 .container-contact {
   background-color: rgb(81, 117, 99);
   font-size: 30px;
-padding: 30px;
+  padding: 30px;
 }
-.container-contact svg{
-    height: auto;
-    width: 30px;
+.container-contact svg {
+  height: auto;
+  width: 30px;
 }
 .hr-center {
-    width: 90%; /* Ajusta el ancho deseado del hr */
-    margin: 0 auto; /* Centra horizontalmente el hr en su contenedor */
-    border-style: solid; /* Cambia el estilo de la línea según tu preferencia (puedes usar dashed, dotted, etc.) */
-    border-width: 3px; /* Ancho de la línea */
-    border-color: #808080; /* Color de la línea */
+  width: 90%; /* Ajusta el ancho deseado del hr */
+  margin: 0 auto; /* Centra horizontalmente el hr en su contenedor */
+  border-style: solid; /* Cambia el estilo de la línea según tu preferencia (puedes usar dashed, dotted, etc.) */
+  border-width: 3px; /* Ancho de la línea */
+  border-color: #808080; /* Color de la línea */
 }
-.container-products img{
-height: 320px;
-width: auto;
+.container-products img {
+  height: 320px;
+  width: auto;
 }
-.container-products .card{
-  width: 15rem; 
+.container-products .card {
+  width: 15rem;
   height: 30rem;
+}
+/* Fondo y Margen */
+.sobre-nosotros {
+  background-color: #f8f8f8; /* Fondo suave */
+  padding: 30px; /* Espaciado interior */
+  margin-bottom: 20px; /* Espaciado inferior */
+}
+
+/* Tipografía */
+.sobre-nosotros h2 {
+  font-size: 24px; /* Tamaño del título */
+  color: #333; /* Color del texto del título */
+  margin-bottom: 15px; /* Espaciado inferior */
+}
+
+.sobre-nosotros span {
+  font-size: 19px; /* Tamaño del texto */
+  line-height: 1.5; /* Espaciado entre líneas */
+  color: #666; /* Color del texto */
+  text-align: center; /* Texto justificado */
+  justify-content: center;
+}
+
+/* Borde Redondeado */
+.sobre-nosotros {
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Sombra */
+.sobre-nosotros {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Hover Efecto */
+.sobre-nosotros:hover {
+  background-color: #fff; /* Cambio de fondo en el hover */
+  transform: scale(1.02); /* Escalado suave en el hover */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Transición suave */
 }

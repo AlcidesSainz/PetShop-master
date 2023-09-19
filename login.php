@@ -5,14 +5,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Agrega los estilos CSS de Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="styles/styleLogin.css" />
   <link rel="stylesheet" href="styles/styleRegistro.css" />
+
+  <style>
+    body {
+      overflow: hidden;
+    }
+
+    #perro-corriendo {
+      position: absolute;
+      z-index: -1;
+      left: -100px;
+      /* Posición inicial fuera de la pantalla */
+      top: 50%;
+      /* Ajusta la posición vertical según tus necesidades */
+    }
+  </style>
 </head>
 
 <body>
+
   <div class="container mt-5">
     <div id="login-container" class="login-container">
       <div class="login-header">
@@ -51,10 +69,29 @@
     </div>
   </div>
 
+  <img id="perro-corriendo" src="img/perro corriendo.gif" style="width: 100px; height: auto;">
+  <!-- Script para activar la animación al cargar la página -->
+  <script>
+    // Espera a que se cargue el documento completamente
+    document.addEventListener('DOMContentLoaded', function () {
+      // Selecciona la imagen por su ID
+      const imagen = document.getElementById('perro-corriendo');
+
+      // Define la animación utilizando Anime.js
+      anime({
+        targets: imagen,          // Elemento a animar (nuestra imagen)
+        translateX: '2000px',     // Mueve la imagen 200px hacia la derecha
+        duration: 20000,          // Duración de la animación en milisegundos (2 segundos)
+        easing: 'easeOutQuad',   // Tipo de aceleración de la animación (puedes ajustarlo)
+        loop: true,              // Repite la animación
+      });
+    });
+  </script>
 
   <!-- Agrega los scripts de Bootstrap y jQuery (si es necesario) -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
 </body>
 
@@ -92,11 +129,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($esAdmin) {
       // El usuario es administrador, redirige a la página de administrador
       header("Location: index.php?esAdmin=true"); // Redirecciona a index.php con la variable en la URL
- 
+
       exit();
     } else {
       // El usuario no es administrador, redirige a la página de usuario regular
-   
+
       header("Location: index.php");
       exit();
     }
@@ -109,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- JavaScript para mostrar el modal solo después de enviar el formulario -->
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
       if ($loginSuccess) {

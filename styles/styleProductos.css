@@ -1,3 +1,6 @@
+body {
+  font-family: "Comic Sans MS", sans-serif;
+}
 .card img {
   height: 270px; /* Establece la altura fija para las tarjetas */
   width: auto;
@@ -126,4 +129,7 @@
 
 #confirmModal {
   z-index: 99999999;
+}
+th {
+  margin-left: 5px;
 }

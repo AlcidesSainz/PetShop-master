@@ -1,0 +1,30 @@
+.ingresar-container {
+  width: 500px;
+  border: 2px solid black;
+  padding: 50px;
+}
+/* Estilo personalizado para el menú lateral */
+.sidebar {
+  height: 100%;
+  width: 250px; /* Ancho del menú lateral */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #333; /* Color de fondo del menú */
+  padding-top: 20px; /* Espacio superior */
+  padding-right: 10px; /* Espacio derecho */
+  color: white; /* Color del texto */
+}
+
+/* Estilo para el contenido principal */
+.content {
+  margin-left: 250px; /* Ajusta el margen izquierdo para dejar espacio al menú */
+  padding: 20px; /* Espacio interior del contenido */
+}
+.tableProducts{
+  position: relative;
+  margin-left:300px ;
+}
+.sidebarMenu{
+  position: absolute;
+}
