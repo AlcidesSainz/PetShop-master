@@ -1,5 +1,5 @@
 <?php
-$tipoMascota = $_GET["tipomascota"];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Requerir el archivo que contiene la definición de la función actualizarStock2
     require_once 'productos.php'; // Reemplaza con la ruta correcta
@@ -59,28 +59,41 @@ function obtenerListProducto($productiIdList)
 // Función para actualizar el stock de productos
 function actualizarStock2($productoId, $cantidad)
 {
-    // Establecer la conexión a la base de datos (debes configurar estos valores según tu entorno)
     $con = conectarBD();
 
-    // Consulta SQL para actualizar el stock del producto
-    $sql = "UPDATE producto SET stock = stock - ? WHERE idproducto = ?";
+    try {
+        // Iniciar una transacción
+        $con->begin_transaction();
 
-    // Preparar la declaración SQL
-    $stmt = $con->prepare($sql);
+        // Llamar al procedimiento almacenado que actualiza el stock e inserta en ventas
+        $sqlCallProcedure = "CALL ActualizarStockEInsertarVenta(?, ?)";
+        $stmtCallProcedure = $con->prepare($sqlCallProcedure);
+        $stmtCallProcedure->bind_param("ii", $productoId, $cantidad);
 
-    if ($stmt === false) {
-        die("Error al preparar la declaración SQL: " . $con->error);
+        if ($stmtCallProcedure->execute()) {
+            // Confirmar la transacción
+            $con->commit();
+
+            $stmtCallProcedure->close();
+            $con->close();
+        } else {
+            // Revertir la transacción en caso de error
+            $con->rollback();
+
+            echo "Error al llamar al procedimiento almacenado: " . $stmtCallProcedure->error;
+            $stmtCallProcedure->close();
+            $con->close();
+        }
+    } catch (Exception $e) {
+        // Manejo de excepciones
+        $con->rollback();
+        echo "Error: " . $e->getMessage();
     }
-
-    // Vincular los parámetros
-    $stmt->bind_param("ii", $cantidad, $productoId);
-
-    $stmt->execute();
-
-    // Cerrar la conexión
-    $stmt->close();
-    $con->close();
 }
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -303,7 +316,7 @@ function obtenerStockProducto($idProducto)
             // Cerrar la conexión
             $conn->close();
             ?>
-            
+
         </select>
 
 
@@ -325,7 +338,7 @@ function obtenerStockProducto($idProducto)
         </div>
         <div class="row mb-5">
             <?php foreach ($productos as $producto): ?>
-                <div class="col-3 product-card" data-tipomascota="<?php echo $producto['tipomascota']; ?>">
+                <div class="col-sm-12 col-md-3 col-lg-3  product-card " data-tipomascota="<?php echo $producto['tipomascota']; ?>">
                     <div class="card mt-5 justify-content-center text-center">
                         <img src="img/products/<?php echo $producto['imagen']; ?>" class="card-img-top" alt="Producto" />
                         <div class="card-body">
@@ -586,7 +599,7 @@ function obtenerStockProducto($idProducto)
         $(document).ready(function () {
             $(document).delegate('#confirmCompraCarrito', 'click', function () {
 
-                debugger;
+
                 var currentCartHidden = $("#currentCartHidden").val().replace(/^,/, '');
                 var currentCartValues = currentCartHidden.split(","); //id-cant
 
@@ -845,7 +858,7 @@ function obtenerStockProducto($idProducto)
 
             // Función para agregar un producto al carrito
             function addToCart(idproducto, cantidad) {
-                debugger;
+                
                 // Agrega el producto seleccionado al array del carrito
 
                 var resultado = $.grep(cart, function (producto) {
@@ -877,7 +890,7 @@ function obtenerStockProducto($idProducto)
 
             // Función para eliminar un producto del carrito
             function removeFromCart(productName) {
-                debugger;
+                
                 // Encuentra el índice del producto en el carrito
                 const index = cart.findIndex(product => product.nombre === productName);
 
@@ -902,14 +915,14 @@ function obtenerStockProducto($idProducto)
 
                 // Actualiza el elemento HTML con el total calculado
 
-                totalPriceElement.textContent = isNaN(valor) ? `0.00` : `$${total.toFixed(2)}`;
+                totalPriceElement.textContent = isNaN(total) ? `0.00` : `$${total.toFixed(2)}`;
             }
 
 
 
             // Al abrir el modal, configura los datos del producto en el botón "Añadir al carrito"
             document.getElementById('myModal').addEventListener('show.bs.modal', function (event) {
-                debugger;
+                
                 const button = event.relatedTarget;
 
                 const idproducto = $(button).attr("data-id");
@@ -962,7 +975,7 @@ function obtenerStockProducto($idProducto)
 
 
         $(document).delegate(".deleteButton", "click", function () {
-            debugger;
+            
             var idproducto = $(this).data("idproducto");
             var subtotal = $(this).data("subtotal");
 
@@ -989,7 +1002,7 @@ function obtenerStockProducto($idProducto)
 
 
         var deleteProdcutoFromCart = function (idproducto, subtotal) {
-            debugger;
+            
 
             for (var i = 0; i < cart.length; i++) {
                 if (cart[i].idproducto == idproducto) {
