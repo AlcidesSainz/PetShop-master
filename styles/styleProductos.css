@@ -1,5 +1,5 @@
 body {
-  font-family: "Comic Sans MS", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 .card img {
   height: 270px; /* Establece la altura fija para las tarjetas */
@@ -133,3 +133,60 @@ body {
 th {
   margin-left: 5px;
 }
+.vibrate {
+  animation: vibrate 2s cubic-bezier(0.2, 0.4, 0.8, 1.2) infinite;
+}
+
+@keyframes vibrate {
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-2px);
+  }
+  20% {
+    transform: translateX(2px);
+  }
+  30% {
+    transform: translateX(-2px);
+  }
+  40% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.vibrate-up-down {
+  animation: vibrateUpDown 2s cubic-bezier(0.2, 0.4, 0.8, 1.2) infinite;
+}
+
+@keyframes vibrateUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(-2px);
+  }
+  20% {
+    transform: translateY(2px);
+  }
+  30% {
+    transform: translateY(-2px);
+  }
+  40% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.1); /* Ajusta el factor de escala según tus preferencias */
+}
+
+

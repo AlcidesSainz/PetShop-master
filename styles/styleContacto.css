@@ -1,6 +1,6 @@
 body {
   background-color: #f4f4f4;
-  font-family: "Comic Sans MS", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .container {
@@ -35,4 +35,11 @@ label {
 
 .btn-primary:hover {
   background-color: #0056b3;
+}
+.card-Comments {
+  transition: transform 0.2s;
+}
+
+.card-Comments:hover {
+  transform: scale(1.1); /* Ajusta el factor de escala según tus preferencias */
 }

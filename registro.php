@@ -10,9 +10,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Agrega los estilos CSS de Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="styles/styleLogin.css" />
     <link rel="stylesheet" href="styles/styleRegistro.css" />
-
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
     <style>
         body {
             overflow: hidden;
@@ -31,10 +30,8 @@
 </head>
 
 <body>
-
     <!--Container Registro -->
-    <div class="container mt-5">
-
+    <div class="container mb-5">
         <?php
         // Variables para almacenar los valores de los campos
         $nombre = '';
@@ -89,7 +86,7 @@
         }
         ?>
 
-        <div class="registro-container" id="registro-container">
+        <div class="registro-container mt-5" id="registro-container">
             <div class="registro-header">
                 <h2>Registro de Usuario</h2>
             </div>

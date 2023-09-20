@@ -11,7 +11,8 @@
   <!-- Agrega los estilos CSS de Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="styles/styleLogin.css" />
-  <link rel="stylesheet" href="styles/styleRegistro.css" />
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 
   <style>
     body {
