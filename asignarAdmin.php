@@ -75,6 +75,9 @@ function obtenerUsuarios()
                         <a class="nav-link" href="asignarAdmin.php">Gestión Usuarios</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="historialCompras.php">Historial de ventas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="index.php">Salir</a>
                     </li>
                 </ul>
