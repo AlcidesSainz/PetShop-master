@@ -194,108 +194,111 @@
         exit;
     }
     ?>
-    <!-- Menú lateral -->
-    <div class="sidebar">
-        <h2>Menú de Admin</h2>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active" href="ingresarProducto.php">Ingresar Nuevo Producto</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="verProductos.php">Ver Productos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="anadirCant.php">Añadir Cantidad a Producto </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="anadirCategoria.php">Añadir Categoría</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="anadirTipoMascota.php">Añadir Tipo Mascota</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="anadirProveedor.php">Añadir Proveedor</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="asignarAdmin.php">Gestión Usuarios</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="historialCompras.php">Historial de ventas</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="index.php">Salir</a>
-            </li>
-        </ul>
-    </div>
-
-
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 mx-auto mt-5">
-                <!-- Contenido del div centrado -->
-                <div class="ingresar-container">
-                    <h3 class="text-center">Ingresa un nuevo producto</h3>
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Producto" required name="producto"
-                                id="producto" />
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Precio" required name="precio"
-                                id="precio" step="0.01" />
-                        </div>
-                        <div class="form-group">
-                            <input type="number" class="form-control" placeholder="Cantidad" required name="cantidad"
-                                id="cantidad" />
-                        </div>
-                        <select class="form-control" name="categoria" id="categoria">
-                            <option value="" disabled selected>Categoria</option>
-                            <?php
-                            $categorias = obtenerCategorias();
-                            foreach ($categorias as $categoria) {
-                                $categoriaId = obtenerIdCategoria($categoria);
-                                echo '<option value="' . $categoriaId . '">' . $categoria . '</option>';
-                            }
-                            ?>
-                        </select>
-                        <br>
-                        <select class="form-control" name="proveedor" id="proveedor">
-                            <option value="" disabled selected>Proveedor</option>
-                            <?php
-                            $nombresProveedores = obtenerNombresProveedores();
-                            foreach ($nombresProveedores as $nombreProveedor) {
-                                $proveedorId = obtenerIdProveedor($nombreProveedor);
-                                echo '<option value="' . $proveedorId . '">' . $nombreProveedor . '</option>';
-                            }
-                            ?>
-                        </select>
-                        <br>
-                        <select class="form-control" name="mascota" id="mascota">
-                            <option value="" disabled selected>Mascota</option>
-                            <?php
-                            $tipoMascotas = obtenerTipoMascota();
-                            foreach ($tipoMascotas as $tipoMascota) {
-                                $mascotaId = obtenerIdMascota($tipoMascota);
-                                echo '<option value="' . $mascotaId . '">' . $tipoMascota . '</option>';
-                            }
-                            ?>
-                        </select>
-                        <br>
-                        <div class="form-group">
-                            <label for="imagen">Selecciona una imagen:</label>
-                            <input type="file" name="imagen" id="imagen" accept="image/*">
-                        </div>
-                        <!-- Agrega más campos de registro si es necesario -->
-                        <button type="submit" class="btn btn-registro btn-block">
-                            Añadir Producto
-                        </button>
+            <!-- Menú lateral -->
+            <div class="col-md-2 col-lg-2 d-md-block sidebar">
+                <h2>Menú de Admin</h2>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="ingresarProducto.php">Ingresar Nuevo Producto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="verProductos.php">Ver Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="anadirCant.php">Añadir Cantidad a Producto </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="anadirCategoria.php">Añadir Categoría</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="anadirTipoMascota.php">Añadir Tipo Mascota</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="anadirProveedor.php">Añadir Proveedor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asignarAdmin.php">Gestión Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="historialCompras.php">Historial de ventas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Salir</a>
+                    </li>
+                </ul>
+            </div>
 
-                    </form>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mx-auto mt-5">
+                        <!-- Contenido del div centrado -->
+                        <div class="ingresar-container">
+                            <h3 class="text-center">Ingresa un nuevo producto</h3>
+                            <form method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Producto" required
+                                        name="producto" id="producto" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Precio" required name="precio"
+                                        id="precio" step="0.01" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" class="form-control" placeholder="Cantidad" required
+                                        name="cantidad" id="cantidad" />
+                                </div>
+                                <select class="form-control" name="categoria" id="categoria">
+                                    <option value="" disabled selected>Categoria</option>
+                                    <?php
+                                    $categorias = obtenerCategorias();
+                                    foreach ($categorias as $categoria) {
+                                        $categoriaId = obtenerIdCategoria($categoria);
+                                        echo '<option value="' . $categoriaId . '">' . $categoria . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <br>
+                                <select class="form-control" name="proveedor" id="proveedor">
+                                    <option value="" disabled selected>Proveedor</option>
+                                    <?php
+                                    $nombresProveedores = obtenerNombresProveedores();
+                                    foreach ($nombresProveedores as $nombreProveedor) {
+                                        $proveedorId = obtenerIdProveedor($nombreProveedor);
+                                        echo '<option value="' . $proveedorId . '">' . $nombreProveedor . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <br>
+                                <select class="form-control" name="mascota" id="mascota">
+                                    <option value="" disabled selected>Mascota</option>
+                                    <?php
+                                    $tipoMascotas = obtenerTipoMascota();
+                                    foreach ($tipoMascotas as $tipoMascota) {
+                                        $mascotaId = obtenerIdMascota($tipoMascota);
+                                        echo '<option value="' . $mascotaId . '">' . $tipoMascota . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <br>
+                                <div class="form-group">
+                                    <label for="imagen">Selecciona una imagen:</label>
+                                    <input type="file" name="imagen" id="imagen" accept="image/*">
+                                </div>
+                                <!-- Agrega más campos de registro si es necesario -->
+                                <button type="submit" class="btn btn-registro btn-block">
+                                    Añadir Producto
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Agrega los scripts de Bootstrap y jQuery (si es necesario) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
