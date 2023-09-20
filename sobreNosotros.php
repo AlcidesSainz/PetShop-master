@@ -49,10 +49,6 @@
                         <?php endif; ?>
                     </ul>
 
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button class="btn btn-outline-dark" type="submit">Buscar</button>
-                    </form>
 
                     <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
 

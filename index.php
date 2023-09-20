@@ -49,10 +49,7 @@
             <?php endif; ?>
           </ul>
 
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button class="btn btn-outline-dark" type="submit">Buscar</button>
-          </form>
+
 
           <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
 
@@ -127,50 +124,51 @@
   <div id="container-head1">
     <h3 class="text-center">Compra Por Mascota</h3>
   </div>
-  <div class="container mt-4">
-    <div class="row container-categories">
-      <div class="col-md-3 mb-3">
-        <div class="text-center image-container">
-          <a href="#" class="d-block no-link-style">
-            <img src="img/categories/gato.jpg" alt="Imagen 1" class="rounded-circle img-thumbnail circle-pets" />
-            <div class="mt-2">
-              <p>Gatos</p>
-            </div>
-          </a>
-        </div>
+<div class="container mt-4">
+  <div class="row container-categories">
+    <div class="col-md-3 mb-3">
+      <div class="text-center image-container">
+        <a href="productos.php?tipomascota=gato" class="d-block no-link-style">
+          <img src="img/categories/gato.jpg" alt="Imagen 1" class="rounded-circle img-thumbnail circle-pets" />
+          <div class="mt-2">
+            <p>Gatos</p>
+          </div>
+        </a>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="text-center image-container">
-          <a href="#" class="d-block no-link-style">
-            <img src="img/categories/perro.jpg" alt="Imagen 2" class="rounded-circle img-thumbnail circle-pets" />
-            <div class="mt-2">
-              <p>Perros</p>
-            </div>
-          </a>
-        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="text-center image-container">
+        <a href="productos.php?tipomascota=perro" class="d-block no-link-style">
+          <img src="img/categories/perro.jpg" alt="Imagen 2" class="rounded-circle img-thumbnail circle-pets" />
+          <div class="mt-2">
+            <p>Perros</p>
+          </div>
+        </a>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="text-center image-container">
-          <a href="#" class="d-block no-link-style">
-            <img src="img/categories/pez.jpg" alt="Imagen 3" class="rounded-circle img-thumbnail circle-pets" />
-            <div class="mt-2">
-              <p>Peces</p>
-            </div>
-          </a>
-        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="text-center image-container">
+        <a href="productos.php?tipomascota=pez" class="d-block no-link-style">
+          <img src="img/categories/pez.jpg" alt="Imagen 3" class="rounded-circle img-thumbnail circle-pets" />
+          <div class="mt-2">
+            <p>Peces</p>
+          </div>
+        </a>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="text-center image-container">
-          <a href="#" class="d-block no-link-style">
-            <img src="img/categories/otros.jpg" alt="Imagen 3" class="rounded-circle img-thumbnail circle-pets" />
-            <div class="mt-2">
-              <p>Otros</p>
-            </div>
-          </a>
-        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="text-center image-container">
+        <a href="productos.php?tipomascota=otros" class="d-block no-link-style">
+          <img src="img/categories/otros.jpg" alt="Imagen 3" class="rounded-circle img-thumbnail circle-pets" />
+          <div class="mt-2">
+            <p>Otros</p>
+          </div>
+        </a>
       </div>
     </div>
   </div>
+</div>
+
   <!-- Seccion servicios -->
   <div class="container mt-5 container-servicios">
     <div class="row justify-content-center">

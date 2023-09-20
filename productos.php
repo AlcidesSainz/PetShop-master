@@ -1,4 +1,5 @@
 <?php
+$tipoMascota = $_GET["tipomascota"];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Requerir el archivo que contiene la definición de la función actualizarStock2
     require_once 'productos.php'; // Reemplaza con la ruta correcta
@@ -254,9 +255,11 @@ function obtenerStockProducto($idProducto)
                     </ul>
 
                     <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button class="btn btn-outline-dark" type="submit">Buscar</button>
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                            id="searchInput" />
+                        <button class="btn btn-outline-dark" type="button" id="searchButton">Buscar</button>
                     </form>
+
 
                     <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
                     <a href="#" id="cartButton"><img class="img-icon img-fluid" src="ico/cart2.svg" alt="" /></a>
@@ -267,6 +270,42 @@ function obtenerStockProducto($idProducto)
     <!-- Sección Productos -->
 
     <div class="container  ">
+        <label class="m-2" for="tipoMascota">Seleccione el tipo de mascota:</label>
+        <select name="tipoMascota" id="tipoMascota" style="width: 100px;">
+            <option value="">Todos</option>
+            <?php
+            // Conexión a la base de datos (ajusta las credenciales según tu configuración)
+            $servername = "localhost";
+            $username = "root";
+            $password = "root";
+            $dbname = "pet_shop";
+
+            $conn = new mysqli($servername, $username, $password, $dbname);
+
+            // Verificar si la conexión fue exitosa
+            if ($conn->connect_error) {
+                die("Error de conexión: " . $conn->connect_error);
+            }
+
+            // Consulta SQL para obtener los tipos de mascotas
+            $sql = "SELECT idtipoMascota, mascota FROM tipomascota";
+
+            // Ejecutar la consulta
+            $result = $conn->query($sql);
+
+            // Generar opciones del select
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<option value='" . $row["idtipoMascota"] . "'>" . $row["mascota"] . "</option>";
+                }
+            }
+
+            // Cerrar la conexión
+            $conn->close();
+            ?>
+            
+        </select>
+
 
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
             id="confirmModal">
@@ -286,7 +325,7 @@ function obtenerStockProducto($idProducto)
         </div>
         <div class="row mb-5">
             <?php foreach ($productos as $producto): ?>
-                <div class="col-3">
+                <div class="col-3 product-card" data-tipomascota="<?php echo $producto['tipomascota']; ?>">
                     <div class="card mt-5 justify-content-center text-center">
                         <img src="img/products/<?php echo $producto['imagen']; ?>" class="card-img-top" alt="Producto" />
                         <div class="card-body">
@@ -498,6 +537,50 @@ function obtenerStockProducto($idProducto)
     <!-- pdfMake JS -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Captura el evento de presionar la tecla "Enter" en el campo de búsqueda
+            $("#searchInput").keypress(function (e) {
+                if (e.which == 13) { // 13 es el código de tecla "Enter"
+                    e.preventDefault(); // Evita la recarga de la página
+                    $("#searchButton").click(); // Simula hacer clic en el botón de búsqueda
+                }
+            });
+
+            $("#searchButton").click(function () {
+                var searchTerm = $("#searchInput").val().trim().toLowerCase();
+
+                if (searchTerm === "") {
+                    $(".product-card").show();
+                } else {
+                    $(".product-card").hide();
+
+                    $(".product-card").each(function () {
+                        var productName = $(this).find(".card-title").text().toLowerCase();
+                        if (productName.includes(searchTerm)) {
+                            $(this).show();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Cuando cambie la selección en el select
+            $("#tipoMascota").change(function () {
+                var selectedTipoMascota = $(this).val();
+
+                // Mostrar u ocultar tarjetas de producto basadas en el tipo de mascota seleccionado
+                if (selectedTipoMascota === "") {
+                    $(".product-card").show(); // Mostrar todas las tarjetas si se selecciona "Todos"
+                } else {
+                    $(".product-card").hide(); // Ocultar todas las tarjetas
+                    $(".product-card[data-tipomascota='" + selectedTipoMascota + "']").show(); // Mostrar tarjetas con el tipo de mascota seleccionado
+                }
+            });
+        });
+    </script>
     <!--Configuracion del carrito -->
     <script>
         $(document).ready(function () {

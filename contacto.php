@@ -50,10 +50,7 @@
                         <?php endif; ?>
                     </ul>
 
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button class="btn btn-outline-dark" type="submit">Buscar</button>
-                    </form>
+
 
                     <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
 
@@ -158,7 +155,7 @@
     </div>
     <div class="container container-comments mt-5 mb-5">
         <h2>Comentarios de nuestros clientes:</h2>
-        <div id="comentarios" ></div>
+        <div id="comentarios"></div>
     </div>
     <!-- Seccion Footer -->
     <div class="row text-center container-contact">
