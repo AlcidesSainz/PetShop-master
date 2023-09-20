@@ -49,6 +49,8 @@
 
             // Verifica si las contraseñas coinciden
             if ($contrasena == $contrasenaRepetida) {
+                // Encripta la contraseña
+                $hashed_password = password_hash($contrasena, PASSWORD_DEFAULT);
                 // Realiza la conexión a la base de datos ( reemplaza con tus propias credenciales )
                 $servername = 'localhost';
                 $username = 'root';
@@ -61,7 +63,7 @@
                 }
 
                 // Inserta los datos en la tabla de usuarios ( reemplaza 'nombre_tabla' con el nombre de tu tabla )
-                $sql = "INSERT INTO usuarios (nombre, correo, contrasena) VALUES ('$nombre', '$correo', '$contrasena')";
+                $sql = "INSERT INTO usuarios (nombre, correo, contrasena) VALUES ('$nombre', '$correo', '$hashed_password')";
 
                 if ($conexion->query($sql) === TRUE) {
                     echo '<div class="alert alert-success" role="alert">
@@ -79,9 +81,10 @@
                 // Cierra la conexión a la base de datos
                 $conexion->close();
             } else {
-                echo'<div id="registroFallido" class="alert alert-danger" role="alert">
+                echo '<div id="registroFallido" class="alert alert-danger" role="alert">
         Las contraseñas no coinciden. Por favor, verifícalas.
-    </div>';;
+    </div>';
+                ;
             }
         }
         ?>
@@ -102,6 +105,7 @@
                 <div class="form-group">
                     <input type="password" class="form-control" placeholder="Contraseña" required name="contrasena"
                         id="contrasena" />
+                    <small id="contrasena-error" class="text-danger"></small>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" placeholder="Repita la Contraseña" required
@@ -120,29 +124,77 @@
         </div>
         <img id="gato-corriendo" src="img/gato cco.gif" style="width: 80px;">
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Función para validar la contraseña
+            function validarContrasena(contrasena) {
+                // Define las expresiones regulares para cada requisito
+                const regexMayuscula = /[A-Z]/;
+                const regexNumero = /[0-9]/;
+                const regexCaracterEspecial = /[$&+,:;=?@#|'<>.^*()%!-]/;
 
-<script>
-    // Función para ocultar la alerta después de 2 segundos
-    function ocultarAlerta() {
-        const registroExitoso = document.getElementById('registroExitoso');
-        const registroFallido = document.getElementById('registroFallido');
+                // Verifica si la contraseña cumple con los requisitos
+                const cumpleRequisitos =
+                    regexMayuscula.test(contrasena) &&
+                    regexNumero.test(contrasena) &&
+                    regexCaracterEspecial.test(contrasena);
 
-        if (registroExitoso) {
-            setTimeout(function () {
-                registroExitoso.style.display = 'none';
-            }, 2000);
+                return cumpleRequisitos;
+            }
+
+            // Agrega un evento al campo de contraseña para validar cuando cambia
+            $("#contrasena").on("input", function () {
+                const contrasena = $(this).val();
+                const esValida = validarContrasena(contrasena);
+
+                // Muestra un mensaje de error si la contraseña no cumple los requisitos
+                if (!esValida) {
+                    $("#contrasena-error").text(
+                        "La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial."
+                    );
+                } else {
+                    $("#contrasena-error").text("");
+                }
+            });
+
+            // Agrega un evento al formulario para prevenir su envío si la contraseña no es válida
+            $("form").submit(function (event) {
+                const contrasena = $("#contrasena").val();
+                const esValida = validarContrasena(contrasena);
+
+                if (!esValida) {
+                    event.preventDefault();
+                    $("#contrasena-error").text(
+                        "La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial."
+                    );
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Función para ocultar la alerta después de 2 segundos
+        function ocultarAlerta() {
+            const registroExitoso = document.getElementById('registroExitoso');
+            const registroFallido = document.getElementById('registroFallido');
+
+            if (registroExitoso) {
+                setTimeout(function () {
+                    registroExitoso.style.display = 'none';
+                }, 2000);
+            }
+
+            if (registroFallido) {
+                setTimeout(function () {
+                    registroFallido.style.display = 'none';
+                }, 2000);
+            }
         }
 
-        if (registroFallido) {
-            setTimeout(function () {
-                registroFallido.style.display = 'none';
-            }, 2000);
-        }
-    }
-
-    // Llama a la función para ocultar la alerta
-    ocultarAlerta();
-</script>
+        // Llama a la función para ocultar la alerta
+        ocultarAlerta();
+    </script>
 
 
     <!-- Script para activar la animación al cargar la página -->

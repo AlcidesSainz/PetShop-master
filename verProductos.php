@@ -27,6 +27,12 @@
                     <a class="nav-link" href="anadirCant.php">Añadir Cantidad a Producto </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="anadirCategoria.php">Añadir Categoría</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="anadirTipoMascota.php">Añadir Tipo Mascota</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="asignarAdmin.php">Gestión Usuarios</a>
                 </li>
                 <li class="nav-item">

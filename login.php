@@ -103,6 +103,8 @@ $loginSuccess = false; // Variable para verificar si el inicio de sesión fue ex
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $correo = $_POST["correo"];
   $contrasena = $_POST["contrasena"];
+  $contrasenaHash = password_hash($contrasena, PASSWORD_DEFAULT);
+
 
   $host = "localhost";
   $port = 3306;
@@ -114,30 +116,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
     or die('Could not connect to the database server' . mysqli_connect_error());
 
-  // Consulta SQL para verificar si el usuario existe en la base de datos
-  $query = "SELECT * FROM usuarios WHERE correo = '$correo' AND contrasena = '$contrasena'";
+  // Consulta SQL para obtener la contraseña hasheada del usuario
+  $query = "SELECT contrasena,esAdmin  FROM usuarios WHERE correo = '$correo'";
   $result = $con->query($query);
 
   if ($result->num_rows == 1) {
-    // El usuario ha iniciado sesión con éxito
-    $loginSuccess = true;
-
-    // Obtener el valor de esAdmin para el usuario
     $row = $result->fetch_assoc();
+    $contrasenaHash = $row['contrasena'];
     $esAdmin = $row['esAdmin'];
+    if (password_verify($contrasena, $contrasenaHash)) {
+      // Inicio de sesión exitoso
+      $loginSuccess = true;
+      if ($esAdmin) {
+        // El usuario es administrador, redirige a la página de administrador
+        header("Location: index.php?esAdmin=true"); // Redirecciona a index.php con la variable en la URL
 
-    if ($esAdmin) {
-      // El usuario es administrador, redirige a la página de administrador
-      header("Location: index.php?esAdmin=true"); // Redirecciona a index.php con la variable en la URL
+        exit();
+      } else {
+        // El usuario no es administrador, redirige a la página de usuario regular
 
-      exit();
+        header("Location: index.php");
+        exit();
+      }
     } else {
-      // El usuario no es administrador, redirige a la página de usuario regular
-
-      header("Location: index.php");
-      exit();
+      $loginSuccess = false;
+      // Inicio de sesión fallido
+      // Resto del código...
     }
   }
+
+
 
   // Cerrar la conexión a la base de datos
   $con->close();

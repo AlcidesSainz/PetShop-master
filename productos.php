@@ -106,6 +106,7 @@ function actualizarStock2($productoId, $cantidad)
 
 <?php
 
+
 function conectarBD()
 {
     $host = "localhost";
@@ -120,6 +121,21 @@ function conectarBD()
 
     //$con->close();
     return $con;
+}
+function obtenerTipoMascota()
+{
+    $con = conectarBD();
+    $sql = "SELECT mascota from tipomascota";
+    $result = $con->query($sql);
+
+    $tipoMascotas = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $tipoMascotas[] = $row['mascota'];
+        }
+    }
+    $con->close();
+    return $tipoMascotas;
 }
 // Realiza una consulta a la base de datos para obtener la información de los productos
 function obtenerProductos()
@@ -249,7 +265,9 @@ function obtenerStockProducto($idProducto)
         </nav>
     </div>
     <!-- Sección Productos -->
+
     <div class="container  ">
+
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
             id="confirmModal">
             <div class="modal-dialog modal-sm">
