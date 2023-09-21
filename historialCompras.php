@@ -1,3 +1,52 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
+
+session_start();
+
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (!$IsAdmin) {
+    header("Location: login.php");
+    exit();
+}
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,7 +91,9 @@
                     <a class="nav-link" href="historialCompras.php">Historial de ventas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.php">Salir</a>
+                    <form method="POST">
+                        <input type="submit" class="btn btn-primary" name="cerrar_sesion" value="Cerrar Sesión">
+                    </form>
                 </li>
             </ul>
         </div>

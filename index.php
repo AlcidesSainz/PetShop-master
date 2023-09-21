@@ -1,3 +1,52 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+  die('Error de conexión: ' . $conn->connect_error);
+}
+
+session_start();
+// $_SESSION['loginSuccess'] = $loginSuccess; // Puedes guardar otros datos en la sesión según tus necesidades
+// $_SESSION['id'] = $id;
+// $_SESSION['nombre'] = $nombre;
+// $_SESSION['email'] = $email;
+// $_SESSION['roleId'] = $roleId;
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+  $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+  $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (isset($_SESSION['nombre'])) {
+  $nombre = $_SESSION['nombre'];
+  // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+  // Destruir todas las variables de sesión
+  session_unset();
+
+  // Destruir la sesión
+  session_destroy();
+
+  // Redireccionar a una página después de cerrar la sesión (opcional)
+  header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,13 +101,32 @@
             </li>
             <!-- Verifica si el usuario es administrador antes de mostrar el enlace -->
             <?php // En index.php
-            if (isset($_GET["esAdmin"]) && $_GET["esAdmin"] === "true"): ?>
-              <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active" aria-current="page">Modo
-                  Administrador</a></li>
+            if ($IsAdmin): ?>
+              <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active"
+                  aria-current="page">Administrar</a></li>
             <?php endif; ?>
           </ul>
-          <a href="login.php"> <span>Iniciar Sesión<img class="img-icon img-fluid" src="ico/person-circle.svg"
-                alt="" /></span></a>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 pull-right">
+            <?php // En index.php
+            if (!$isLoginSuccess): ?>
+              <li class="nav-item"><a href="login.php"> <span>Iniciar Sesión</span></a></li>
+
+            <?php else: ?>
+              <li class="nav-item"><small>Bienvenido
+                  <?php echo $nombre ?>
+                </small></li>
+              <li class="nav-item" style="padding-left:10px;">
+                <!-- Botón para cerrar sesión -->
+                <form method="POST">
+                  <input type="submit" class="btn btn-sm btn-primary" name="cerrar_sesion" value="Cerrar Sesión">
+                </form>
+              </li>
+
+            <?php endif; ?>
+          </ul>
+
+
+
         </div>
       </div>
     </nav>

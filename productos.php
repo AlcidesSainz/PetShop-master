@@ -1,4 +1,34 @@
 <?php
+session_start();
+// $_SESSION['loginSuccess'] = $loginSuccess; // Puedes guardar otros datos en la sesión según tus necesidades
+// $_SESSION['id'] = $id;
+// $_SESSION['nombre'] = $nombre;
+// $_SESSION['email'] = $email;
+// $_SESSION['roleId'] = $roleId;
+
+$isLoginSuccess = false;
+$nombre = "";
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Requerir el archivo que contiene la definición de la función actualizarStock2
@@ -119,18 +149,16 @@ function actualizarStock2($productoId, $cantidad)
 
 function conectarBD()
 {
-    $host = "localhost";
-    $port = 3306;
-    $socket = "";
-    $user = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("config.php");
 
-    $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-        or die('Could not connect to the database server' . mysqli_connect_error());
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
 
-    //$con->close();
-    return $con;
+    if ($conn->connect_error) {
+        die('Error de conexión: ' . $conn->connect_error);
+    }
+
+    return $conn;
 }
 function obtenerTipoMascota()
 {
@@ -253,7 +281,6 @@ function obtenerStockProducto($idProducto)
                             <a class="nav-link active" href="productos.php" aria-current="page">
                                 Productos
                             </a>
-
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="sobreNosotros.php">Sobre Nosotros</a>
@@ -263,15 +290,29 @@ function obtenerStockProducto($idProducto)
                         </li>
                     </ul>
 
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                            id="searchInput" />
-                        <button class="btn btn-outline-dark" type="button" id="searchButton">Buscar</button>
-                    </form>
 
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 pull-right">
+                        <?php // En index.php
+                        if (!$isLoginSuccess): ?>
+                            <li class="nav-item"><a href="login.php"> <span>Iniciar Sesión</span></a></li>
 
-                    <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
-                    <a href="#" id="cartButton"><img class="img-icon img-fluid" src="ico/cart2.svg" alt="" /></a>
+                        <?php else: ?>
+                            <li class="nav-item"> <a href="#" id="cartButton"><img class="img-icon img-fluid"
+                                        src="ico/cart2.svg" alt="" /></a></li>
+                            <li class="nav-item">Bienvenido
+                                <?php echo $nombre ?>
+                            </li>
+                            <li class="nav-item" style="padding-left:10px;">
+                                <!-- Botón para cerrar sesión -->
+                                <form method="POST">
+                                    <input type="submit" class="btn btn-sm btn-primary" name="cerrar_sesion"
+                                        value="Cerrar Sesión">
+                                </form>
+                            </li>
+
+                        <?php endif; ?>
+                    </ul>
+
                 </div>
             </div>
         </nav>
@@ -279,42 +320,56 @@ function obtenerStockProducto($idProducto)
     <!-- Sección Productos -->
 
     <div class="container  ">
-        <label class="m-2" for="tipoMascota">Seleccione el tipo de mascota:</label>
-        <select name="tipoMascota" id="tipoMascota" style="width: 100px;">
-            <option value="">Todos</option>
-            <?php
-            // Conexión a la base de datos (ajusta las credenciales según tu configuración)
-            $servername = "localhost";
-            $username = "root";
-            $password = "root";
-            $dbname = "pet_shop";
 
-            $conn = new mysqli($servername, $username, $password, $dbname);
 
-            // Verificar si la conexión fue exitosa
-            if ($conn->connect_error) {
-                die("Error de conexión: " . $conn->connect_error);
-            }
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <label class="m-2" for="tipoMascota">Seleccione el tipo de mascota:</label>
+                <select name="tipoMascota" id="tipoMascota" style="width: 100px;">
+                    <option value="">Todos</option>
+                    <?php
+                    // Conexión a la base de datos (ajusta las credenciales según tu configuración)
+                    $conn = conectarBD();
 
-            // Consulta SQL para obtener los tipos de mascotas
-            $sql = "SELECT idtipoMascota, mascota FROM tipomascota";
+                    // Verificar si la conexión fue exitosa
+                    if ($conn->connect_error) {
+                        die("Error de conexión: " . $conn->connect_error);
+                    }
 
-            // Ejecutar la consulta
-            $result = $conn->query($sql);
+                    // Consulta SQL para obtener los tipos de mascotas
+                    $sql = "SELECT idtipoMascota, mascota FROM tipomascota";
 
-            // Generar opciones del select
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<option value='" . $row["idtipoMascota"] . "'>" . $row["mascota"] . "</option>";
-                }
-            }
+                    // Ejecutar la consulta
+                    $result = $conn->query($sql);
 
-            // Cerrar la conexión
-            $conn->close();
-            ?>
+                    // Generar opciones del select
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row["idtipoMascota"] . "'>" . $row["mascota"] . "</option>";
+                        }
+                    }
 
-        </select>
+                    // Cerrar la conexión
+                    $conn->close();
+                    ?>
 
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                        id="searchInput" />
+                    <button class="btn btn-outline-dark" type="button" id="searchButton">Buscar</button>
+                </form>
+            </div>
+        </div>
+
+        <?php // En index.php
+        if (!$isLoginSuccess): ?>
+            <div class="alert alert-danger mt-4" role="alert">
+                Para poder realizar compras debe haber iniciado sesion
+            </div>
+        <?php endif; ?>
 
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"
             id="confirmModal">
@@ -351,11 +406,25 @@ function obtenerStockProducto($idProducto)
                             <p class="card-text price">Precio: $
                                 <?php echo number_format($producto['precio'], 2); ?>
                             </p>
-                            <a href="#" class="btn btn-primary cardButtonComprar" data-bs-toggle="modal"
-                                data-bs-target="#myModal" data-id="<?php echo ($producto['idproducto']); ?>"
-                                data-stock="<?php echo ($producto['stock']); ?>"
-                                data-price="<?php echo $producto['precio']; ?>"
-                                data-product-image="img/products/<?php echo $producto['imagen']; ?>">Comprar</a>
+
+                            <?php // En index.php
+                                if (!$isLoginSuccess): ?>
+                                <a href="#" class="btn btn-primary disabled" data-bs-toggle="modal" data-bs-target="#myModal"
+                                    data-id="<?php echo ($producto['idproducto']); ?>"
+                                    data-stock="<?php echo ($producto['stock']); ?>"
+                                    data-price="<?php echo $producto['precio']; ?>"
+                                    data-product-image="img/products/<?php echo $producto['imagen']; ?>">Comprar</a>
+
+                            <?php else: ?>
+                                <a href="#" class="btn btn-primary cardButtonComprar" data-bs-toggle="modal"
+                                    data-bs-target="#myModal" data-id="<?php echo ($producto['idproducto']); ?>"
+                                    data-stock="<?php echo ($producto['stock']); ?>"
+                                    data-price="<?php echo $producto['precio']; ?>"
+                                    data-product-image="img/products/<?php echo $producto['imagen']; ?>">Comprar</a>
+
+                            <?php endif; ?>
+
+
                         </div>
                     </div>
                 </div>

@@ -1,3 +1,14 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -48,21 +59,12 @@
             if ($contrasena == $contrasenaRepetida) {
                 // Encripta la contraseña
                 $hashed_password = password_hash($contrasena, PASSWORD_DEFAULT);
-                // Realiza la conexión a la base de datos ( reemplaza con tus propias credenciales )
-                $servername = 'localhost';
-                $username = 'root';
-                $password = 'root';
-                $database = 'pet_shop';
 
-                $conexion = new mysqli($servername, $username, $password, $database);
-                if ($conexion->connect_error) {
-                    die('Error de conexión: ' . $conexion->connect_error);
-                }
+                $roleCliente = 2; //El usuario se crea con role cliente por default 
+        
+                $sql = "INSERT INTO usuarios (nombre, email, contrasena,roleId) VALUES ('$nombre', '$correo', '$hashed_password', $roleCliente)";
 
-                // Inserta los datos en la tabla de usuarios ( reemplaza 'nombre_tabla' con el nombre de tu tabla )
-                $sql = "INSERT INTO usuarios (nombre, correo, contrasena) VALUES ('$nombre', '$correo', '$hashed_password')";
-
-                if ($conexion->query($sql) === TRUE) {
+                if ($conn->query($sql) === TRUE) {
                     echo '<div class="alert alert-success" role="alert">
                 Registro Exitoso. Redireccionando...
             </div>';
@@ -73,10 +75,10 @@
                 }, 2000);
             </script>';
                 } else {
-                    echo 'Error al registrar: ' . $conexion->error;
+                    echo 'Error al registrar: ' . $conn->error;
                 }
                 // Cierra la conexión a la base de datos
-                $conexion->close();
+                $conn->close();
             } else {
                 echo '<div id="registroFallido" class="alert alert-danger" role="alert">
         Las contraseñas no coinciden. Por favor, verifícalas.

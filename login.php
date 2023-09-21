@@ -1,3 +1,14 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+  die('Error de conexión: ' . $conn->connect_error);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -12,7 +23,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="styles/styleLogin.css" />
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -39,7 +50,7 @@
       </div>
       <form method="POST">
         <div class="form-group">
-          <input name="correo" type="email" class="form-control" placeholder="Correo Electrónico" required />
+          <input name="email" type="email" class="form-control" placeholder="Correo Electrónico" required />
         </div>
         <div class="form-group">
           <input name="contrasena" type="password" class="form-control" placeholder="Contraseña" required />
@@ -102,54 +113,48 @@
 $loginSuccess = false; // Variable para verificar si el inicio de sesión fue exitoso
 // Verificar si se enviaron datos del formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $correo = $_POST["correo"];
+  $email = $_POST["email"];
   $contrasena = $_POST["contrasena"];
   $contrasenaHash = password_hash($contrasena, PASSWORD_DEFAULT);
 
-
-  $host = "localhost";
-  $port = 3306;
-  $socket = "";
-  $user = "root";
-  $password = "root";
-  $dbname = "pet_shop";
-
-  $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-    or die('Could not connect to the database server' . mysqli_connect_error());
-
   // Consulta SQL para obtener la contraseña hasheada del usuario
-  $query = "SELECT contrasena,esAdmin  FROM usuarios WHERE correo = '$correo'";
-  $result = $con->query($query);
+
+  // Consulta SQL preparada
+  $stmt = $conn->prepare("SELECT id, nombre, email, contrasena, roleId FROM usuarios WHERE email = ?");
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
   if ($result->num_rows == 1) {
     $row = $result->fetch_assoc();
     $contrasenaHash = $row['contrasena'];
-    $esAdmin = $row['esAdmin'];
+    $id = $row["id"];
+    $nombre = $row["nombre"];
+    $roleId = $row['roleId'];
+
     if (password_verify($contrasena, $contrasenaHash)) {
       // Inicio de sesión exitoso
       $loginSuccess = true;
-      if ($esAdmin) {
-        // El usuario es administrador, redirige a la página de administrador
-        header("Location: index.php?esAdmin=true"); // Redirecciona a index.php con la variable en la URL
+      session_start();
+      $_SESSION['loginSuccess'] = $loginSuccess;
+      $_SESSION['id'] = $id;
+      $_SESSION['nombre'] = $nombre;
+      $_SESSION['email'] = $email;
+      $_SESSION['roleId'] = $roleId;
 
-        exit();
-      } else {
-        // El usuario no es administrador, redirige a la página de usuario regular
-
-        header("Location: index.php");
-        exit();
-      }
+      header("Location: index.php");
+      exit();
     } else {
+      // Contraseña incorrecta
       $loginSuccess = false;
-      // Inicio de sesión fallido
-      // Resto del código...
     }
+  } else {
+    // Usuario no encontrado
+    $loginSuccess = false;
   }
 
-
-
   // Cerrar la conexión a la base de datos
-  $con->close();
+  $conn->close();
 }
 ?>
 
