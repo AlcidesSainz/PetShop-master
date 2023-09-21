@@ -1,16 +1,15 @@
 <?php
-$host = "localhost";
-$port = 3306;
-$socket = "";
-$user = "root";
-$password = "root";
-$dbname = "pet_shop";
+include("../config.php");
 
-$con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-    or die('Could not connect to the database server' . mysqli_connect_error());
 
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
 $query = "SELECT nombre, comentario FROM comentarios";
-$result = $con->query($query);
+$result = $conn->query($query);
 
 $comments = array();
 
@@ -18,7 +17,7 @@ while ($row = $result->fetch_assoc()) {
     $comments[] = $row;
 }
 
-$con->close();
+$conn->close();
 
 header('Content-Type: application/json');
 echo json_encode($comments);

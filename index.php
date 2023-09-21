@@ -124,9 +124,6 @@ if (isset($_POST['cerrar_sesion'])) {
 
             <?php endif; ?>
           </ul>
-
-
-
         </div>
       </div>
     </nav>

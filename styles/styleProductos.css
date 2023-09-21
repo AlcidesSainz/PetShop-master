@@ -188,5 +188,9 @@ th {
 .card:hover {
   transform: scale(1.1); /* Ajusta el factor de escala según tus preferencias */
 }
+  a {
+    text-decoration: none; /* Quitar el subrayado */
+    color: inherit; /* Mantener el color del texto original (heredar) */
+  }
 
 

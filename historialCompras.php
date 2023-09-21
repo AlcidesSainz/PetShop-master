@@ -45,7 +45,6 @@ if (isset($_POST['cerrar_sesion'])) {
     header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
     exit();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,9 +90,7 @@ if (isset($_POST['cerrar_sesion'])) {
                     <a class="nav-link" href="historialCompras.php">Historial de ventas</a>
                 </li>
                 <li class="nav-item">
-                    <form method="POST">
-                        <input type="submit" class="btn btn-primary" name="cerrar_sesion" value="Cerrar Sesión">
-                    </form>
+                    <a class="nav-link" href="index.php">Salir</a>
                 </li>
             </ul>
         </div>

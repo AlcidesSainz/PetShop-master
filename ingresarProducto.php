@@ -1,3 +1,42 @@
+<?php
+session_start();
+
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (!$IsAdmin) {
+    header("Location: login.php");
+    exit();
+}
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+
+} ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,18 +57,16 @@
     <?php
     function conectarBD()
     {
-        $host = "localhost";
-        $port = 3306;
-        $socket = "";
-        $user = "root";
-        $password = "root";
-        $dbname = "pet_shop";
+        include("config.php");
 
-        $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-            or die('Could not connect to the database server' . mysqli_connect_error());
 
-        //$con->close();
-        return $con;
+        // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+        $conn = new mysqli($servername, $username, $password, $database);
+
+        if ($conn->connect_error) {
+            die('Error de conexión: ' . $conn->connect_error);
+        }
+        return $conn;
     }
     function obtenerCategorias()
     {
@@ -194,10 +231,10 @@
         exit;
     }
     ?>
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <!-- Menú lateral -->
-            <div class="col-md-2 col-lg-2 d-md-block sidebar">
+            <div class="col-md-6 col-lg-6 col-sm-12 d-md-block sidebar">
                 <h2>Menú de Admin</h2>
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -229,72 +266,66 @@
                     </li>
                 </ul>
             </div>
-
-
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 mx-auto mt-5">
-                        <!-- Contenido del div centrado -->
-                        <div class="ingresar-container">
-                            <h3 class="text-center">Ingresa un nuevo producto</h3>
-                            <form method="POST" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Producto" required
-                                        name="producto" id="producto" />
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Precio" required name="precio"
-                                        id="precio" step="0.01" />
-                                </div>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" placeholder="Cantidad" required
-                                        name="cantidad" id="cantidad" />
-                                </div>
-                                <select class="form-control" name="categoria" id="categoria">
-                                    <option value="" disabled selected>Categoria</option>
-                                    <?php
-                                    $categorias = obtenerCategorias();
-                                    foreach ($categorias as $categoria) {
-                                        $categoriaId = obtenerIdCategoria($categoria);
-                                        echo '<option value="' . $categoriaId . '">' . $categoria . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                                <br>
-                                <select class="form-control" name="proveedor" id="proveedor">
-                                    <option value="" disabled selected>Proveedor</option>
-                                    <?php
-                                    $nombresProveedores = obtenerNombresProveedores();
-                                    foreach ($nombresProveedores as $nombreProveedor) {
-                                        $proveedorId = obtenerIdProveedor($nombreProveedor);
-                                        echo '<option value="' . $proveedorId . '">' . $nombreProveedor . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                                <br>
-                                <select class="form-control" name="mascota" id="mascota">
-                                    <option value="" disabled selected>Mascota</option>
-                                    <?php
-                                    $tipoMascotas = obtenerTipoMascota();
-                                    foreach ($tipoMascotas as $tipoMascota) {
-                                        $mascotaId = obtenerIdMascota($tipoMascota);
-                                        echo '<option value="' . $mascotaId . '">' . $tipoMascota . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                                <br>
-                                <div class="form-group">
-                                    <label for="imagen">Selecciona una imagen:</label>
-                                    <input type="file" name="imagen" id="imagen" accept="image/*">
-                                </div>
-                                <!-- Agrega más campos de registro si es necesario -->
-                                <button type="submit" class="btn btn-registro btn-block">
-                                    Añadir Producto
-                                </button>
-
-                            </form>
+            <div class="col-md-6 col-lg-6 col-sm-12 mx-auto mt-3">
+                <!-- Contenido del div centrado -->
+                <div class="ingresar-container">
+                    <h3 class="text-center">Ingresa un nuevo producto</h3>
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Producto" required name="producto"
+                                id="producto" />
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Precio" required name="precio"
+                                id="precio" step="0.01" />
+                        </div>
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Cantidad" required name="cantidad"
+                                id="cantidad" />
+                        </div>
+                        <select class="form-control" name="categoria" id="categoria">
+                            <option value="" disabled selected>Categoria</option>
+                            <?php
+                            $categorias = obtenerCategorias();
+                            foreach ($categorias as $categoria) {
+                                $categoriaId = obtenerIdCategoria($categoria);
+                                echo '<option value="' . $categoriaId . '">' . $categoria . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <br>
+                        <select class="form-control" name="proveedor" id="proveedor">
+                            <option value="" disabled selected>Proveedor</option>
+                            <?php
+                            $nombresProveedores = obtenerNombresProveedores();
+                            foreach ($nombresProveedores as $nombreProveedor) {
+                                $proveedorId = obtenerIdProveedor($nombreProveedor);
+                                echo '<option value="' . $proveedorId . '">' . $nombreProveedor . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <br>
+                        <select class="form-control" name="mascota" id="mascota">
+                            <option value="" disabled selected>Mascota</option>
+                            <?php
+                            $tipoMascotas = obtenerTipoMascota();
+                            foreach ($tipoMascotas as $tipoMascota) {
+                                $mascotaId = obtenerIdMascota($tipoMascota);
+                                echo '<option value="' . $mascotaId . '">' . $tipoMascota . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <br>
+                        <div class="form-group">
+                            <label for="imagen">Selecciona una imagen:</label>
+                            <input type="file" name="imagen" id="imagen" accept="image/*">
+                        </div>
+                        <!-- Agrega más campos de registro si es necesario -->
+                        <button type="submit" class="btn btn-registro btn-block">
+                            Añadir Producto
+                        </button>
+
+                    </form>
                 </div>
             </div>
         </div>

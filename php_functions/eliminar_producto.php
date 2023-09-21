@@ -6,27 +6,22 @@ if (isset($_POST['id'])) {
     // Obtener el ID del producto desde la solicitud
     $idProducto = $_POST['id'];
 
-    // Conectar a la base de datos (asegúrate de configurar los datos de conexión)
-    $host = "localhost";
-    $port = 3306;
-    $socket = "";
-    $user = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("../config.php");
 
-    $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-        or die('Could not connect to the database server' . mysqli_connect_error());
 
-    // Verificar la conexión
-    if ($con->connect_error) {
-        die("Error en la conexión: " . $con->connect_error);
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
+
+    if ($conn->connect_error) {
+        die('Error de conexión: ' . $conn->connect_error);
     }
+
 
     // Consulta SQL para eliminar el producto por ID
     $sql = "DELETE FROM producto WHERE idproducto = ?";
 
     // Preparar la consulta
-    $stmt = $con->prepare($sql);
+    $stmt = $conn->prepare($sql);
 
     if ($stmt) {
         // Vincular el ID del producto a la consulta
@@ -49,7 +44,7 @@ if (isset($_POST['id'])) {
     }
 
     // Cerrar la conexión a la base de datos
-    $con->close();
+    $conn->close();
 
     // Devolver la respuesta como JSON
     header('Content-Type: application/json');

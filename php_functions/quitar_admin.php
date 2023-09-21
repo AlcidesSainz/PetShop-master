@@ -1,22 +1,16 @@
 <?php
 function conectarBD()
 {
-    // Conectar a la base de datos (asegúrate de configurar los datos de conexión)
-    $host = "localhost";
-    $port = 3306;
-    $socket = "";
-    $user = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("../config.php");
 
-    $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-        or die('Could not connect to the database server' . mysqli_connect_error());
 
-    // Verificar la conexión
-    if ($con->connect_error) {
-        die("Error en la conexión: " . $con->connect_error);
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
+
+    if ($conn->connect_error) {
+        die('Error de conexión: ' . $conn->connect_error);
     }
-    return $con; // Devolver la conexión
+    return $conn;
 }
 
 
@@ -26,7 +20,7 @@ if (isset($_POST['idUsuario'])) {
     $con = conectarBD();
 
     // Consulta para verificar si el usuario es administrador
-    $sql = "SELECT esAdmin FROM usuarios WHERE idusuarios = ?";
+    $sql = "SELECT roleId FROM usuarios WHERE id = ?";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("i", $idUsuario);
     $stmt->execute();
@@ -36,7 +30,7 @@ if (isset($_POST['idUsuario'])) {
 
     if ($esAdmin == 1) {
         // Actualiza (administrador) a 0
-        $updateSql = "UPDATE usuarios SET esAdmin = 0 WHERE idusuarios = ?";
+        $updateSql = "UPDATE usuarios SET roleId = 2 WHERE id = ?";
         $updateStmt = $con->prepare($updateSql);
         $updateStmt->bind_param("i", $idUsuario);
         $updateStmt->execute();

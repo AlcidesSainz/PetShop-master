@@ -1,3 +1,51 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
+
+session_start();
+// $_SESSION['loginSuccess'] = $loginSuccess; // Puedes guardar otros datos en la sesión según tus necesidades
+// $_SESSION['id'] = $id;
+// $_SESSION['nombre'] = $nombre;
+// $_SESSION['email'] = $email;
+// $_SESSION['roleId'] = $roleId;
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,10 +53,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contáctanos</title>
+    <link rel="stylesheet" href="styles/styleContacto.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/styleContacto.css">
+
 </head>
 
 <body>
@@ -42,18 +91,31 @@
                             <a class="nav-link active" aria-current="page" href="#">Contáctanos</a>
                         </li>
                         <!-- Verifica si el usuario es administrador antes de mostrar el enlace -->
-
                         <?php // En index.php
-                        if (isset($_GET["esAdmin"]) && $_GET["esAdmin"] === "true"): ?>
+                        if ($IsAdmin): ?>
                             <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active"
-                                    aria-current="page">Ingresar Producto</a></li>
+                                    aria-current="page">Administrar</a></li>
                         <?php endif; ?>
                     </ul>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 pull-right">
+                        <?php // En index.php
+                        if (!$isLoginSuccess): ?>
+                            <li class="nav-item"><a href="login.php"> <span>Iniciar Sesión</span></a></li>
 
+                        <?php else: ?>
+                            <li class="nav-item"><small>Bienvenido
+                                    <?php echo $nombre ?>
+                                </small></li>
+                            <li class="nav-item" style="padding-left:10px;">
+                                <!-- Botón para cerrar sesión -->
+                                <form method="POST">
+                                    <input type="submit" class="btn btn-sm btn-primary" name="cerrar_sesion"
+                                        value="Cerrar Sesión">
+                                </form>
+                            </li>
 
-
-                    <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
-
+                        <?php endif; ?>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -72,31 +134,34 @@
                 $email = $_POST['email'];
                 $mensaje = $_POST['mensaje'];
 
-                $host = "localhost";
-                $port = 3306;
-                $socket = "";
-                $user = "root";
-                $password = "root";
-                $dbname = "pet_shop";
+                include("config.php");
 
-                $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
+                // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+                $conn = new mysqli($servername, $username, $password, $database);
+
+                if ($conn->connect_error) {
+                    die('Error de conexión: ' . $conn->connect_error);
+                }
+
+
+                $conn = new mysqli($host, $user, $password, $dbname, $port, $socket)
                     or die('Could not connect to the database server' . mysqli_connect_error());
 
 
-                if (!$con) {
+                if (!$conn) {
                     die("Error al conectar a la base de datos: " . mysqli_connect_error());
                 }
 
                 $sql = "INSERT INTO comentarios (nombre, email, comentario) VALUES ('$nombre', '$email', '$mensaje')";
 
-                if (mysqli_query($con, $sql)) {
+                if (mysqli_query($conn, $sql)) {
                     echo "<div class='alert alert-success'>¡Tu mensaje se ha enviado con éxito!</div>";
                     echo "<meta http-equiv='refresh' content='1;url=contacto.php'>";
                 } else {
-                    echo "<div class='alert alert-danger'>Error: " . $sql . "<br>" . mysqli_error($con) . "</div>";
+                    echo "<div class='alert alert-danger'>Error: " . $sql . "<br>" . mysqli_error($conn) . "</div>";
                 }
 
-                mysqli_close($con);
+                mysqli_close($conn);
             }
             ?>
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">

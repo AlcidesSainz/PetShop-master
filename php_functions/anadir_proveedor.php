@@ -10,17 +10,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validar los datos si es necesario (por ejemplo, verificar que no estén vacíos)
 
     // Realizar la conexión a la base de datos (ajusta las credenciales según tu configuración)
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("../config.php");
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Verificar si la conexión fue exitosa
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
+
     if ($conn->connect_error) {
-        die("Error de conexión: " . $conn->connect_error);
+        die('Error de conexión: ' . $conn->connect_error);
     }
+    
 
     // Preparar la consulta SQL para insertar un nuevo proveedor
     $sql = "INSERT INTO proveedor (nombreProveedor, direccion, telefono, correo) VALUES (?, ?, ?, ?)";

@@ -277,11 +277,12 @@ function obtenerStockProducto($idProducto)
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item ">
+                        
+                    <li class="nav-item ">
                             <a class="nav-link active" href="productos.php" aria-current="page">
                                 Productos
                             </a>
-                        </li>
+                        </li>    
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="sobreNosotros.php">Sobre Nosotros</a>
                         </li>
@@ -289,26 +290,26 @@ function obtenerStockProducto($idProducto)
                             <a class="nav-link active" aria-current="page" href="contacto.php">Contáctanos</a>
                         </li>
                     </ul>
-
-
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 pull-right">
                         <?php // En index.php
                         if (!$isLoginSuccess): ?>
                             <li class="nav-item"><a href="login.php"> <span>Iniciar Sesión</span></a></li>
 
                         <?php else: ?>
-                            <li class="nav-item"> <a href="#" id="cartButton"><img class="img-icon img-fluid"
-                                        src="ico/cart2.svg" alt="" /></a></li>
+
                             <li class="nav-item">Bienvenido
                                 <?php echo $nombre ?>
                             </li>
                             <li class="nav-item" style="padding-left:10px;">
                                 <!-- Botón para cerrar sesión -->
                                 <form method="POST">
-                                    <input type="submit" class="btn btn-sm btn-primary" name="cerrar_sesion"
+                                    <input type="submit" class="btn  btn-primary " name="cerrar_sesion"
                                         value="Cerrar Sesión">
                                 </form>
+                            <li class="nav-item"> <a href="#" id="cartButton"><img class="img-icon img-fluid"
+                                        src="ico/cart2.svg" alt="" /></a></li>
                             </li>
+
 
                         <?php endif; ?>
                     </ul>
@@ -389,7 +390,7 @@ function obtenerStockProducto($idProducto)
         </div>
         <div class="row mb-5">
             <?php foreach ($productos as $producto): ?>
-                <div class="col-sm-12 col-md-3 col-lg-3  product-card "
+                <div class="col-sm-12 col-md-6 col-lg-3  product-card "
                     data-tipomascota="<?php echo $producto['tipomascota']; ?>">
                     <div class="card mt-5 justify-content-center text-center">
                         <img src="img/products/<?php echo $producto['imagen']; ?>" class="card-img-top" alt="Producto" />

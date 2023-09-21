@@ -1,3 +1,42 @@
+<?php
+session_start();
+
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (!$IsAdmin) {
+    header("Location: login.php");
+    exit();
+}
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+} 
+?>
 <!DOCTYPE html>
 <html lang="en">
 

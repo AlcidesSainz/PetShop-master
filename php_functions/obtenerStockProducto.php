@@ -1,19 +1,14 @@
 <?php
-// Conecta a la base de datos (asegúrate de configurar los datos de conexión)
-$host = "localhost";
-$port = 3306;
-$socket = "";
-$user = "root";
-$password = "root";
-$dbname = "pet_shop";
+include("../config.php");
 
-$con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-    or die('Could not connect to the database server' . mysqli_connect_error());
 
-// Verificar la conexión
-if ($con->connect_error) {
-    die("Error en la conexión: " . $con->connect_error);
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
 }
+
 
 // Obtener el ID del producto desde la solicitud GET
 if (isset($_GET['idproducto'])) {
@@ -21,7 +16,7 @@ if (isset($_GET['idproducto'])) {
 
     // Consulta para obtener el stock del producto por su ID
     $sql = "SELECT stock FROM producto WHERE idproducto = ?";
-    $stmt = $con->prepare($sql);
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $idProducto);
     $stmt->execute();
     $stmt->bind_result($stock);
@@ -34,5 +29,5 @@ if (isset($_GET['idproducto'])) {
     echo "No se proporcionó un ID de producto válido.";
 }
 
-$con->close();
+$conn->close();
 ?>

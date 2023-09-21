@@ -1,19 +1,52 @@
 <?php
+session_start();
 
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (!$IsAdmin) {
+    header("Location: login.php");
+    exit();
+}
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+}
 function conectarBD()
 {
-    $host = "localhost";
-    $port = 3306;
-    $socket = "";
-    $user = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("config.php");
 
-    $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-        or die('Could not connect to the database server' . mysqli_connect_error());
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
 
-    //$con->close();
-    return $con;
+    if ($conn->connect_error) {
+        die('Error de conexión: ' . $conn->connect_error);
+    }
+    return $conn;
 
 
 }
@@ -92,12 +125,12 @@ function obtenerUsuarios()
                 <?php
 
                 $con = conectarBD();
-                $sql = "SELECT idusuarios,nombre FROM usuarios";
+                $sql = "SELECT id,nombre FROM usuarios WHERE roleId !=1";
                 $result = $con->query($sql);
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $idUsuario = $row['idusuarios'];
+                        $idUsuario = $row['id'];
                         $nombreUsuario = $row['nombre'];
                         echo '<option value="' . $idUsuario . '">' . $nombreUsuario . '</option>';
                     }
@@ -118,12 +151,12 @@ function obtenerUsuarios()
                 <?php
 
                 $con = conectarBD();
-                $sql = "SELECT idusuarios,nombre FROM usuarios WHERE esAdmin = 1";
+                $sql = "SELECT id,nombre FROM usuarios WHERE roleId = 1";
                 $result = $con->query($sql);
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $idUsuario = $row['idusuarios'];
+                        $idUsuario = $row['id'];
                         $nombreUsuario = $row['nombre'];
                         echo '<option value="' . $idUsuario . '">' . $nombreUsuario . '</option>';
                     }
@@ -144,12 +177,12 @@ function obtenerUsuarios()
                 <?php
 
                 $con = conectarBD();
-                $sql = "SELECT idusuarios,nombre FROM usuarios WHERE esAdmin = 0 or esAdmin IS NULL";
+                $sql = "SELECT id,nombre FROM usuarios WHERE roleId = 2 or roleId IS NULL";
                 $result = $con->query($sql);
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $idUsuario = $row['idusuarios'];
+                        $idUsuario = $row['id'];
                         $nombreUsuario = $row['nombre'];
                         echo '<option value="' . $idUsuario . '">' . $nombreUsuario . '</option>';
                     }

@@ -1,3 +1,51 @@
+<?php
+include("config.php");
+
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
+
+session_start();
+// $_SESSION['loginSuccess'] = $loginSuccess; // Puedes guardar otros datos en la sesión según tus necesidades
+// $_SESSION['id'] = $id;
+// $_SESSION['nombre'] = $nombre;
+// $_SESSION['email'] = $email;
+// $_SESSION['roleId'] = $roleId;
+$adminRole = 1; //El rol 1 corresponde al Admin
+$isLoginSuccess = false;
+$roleid = -1;
+
+if (isset($_SESSION['loginSuccess'])) {
+    $isLoginSuccess = $_SESSION['loginSuccess'];
+}
+
+if (isset($_SESSION['roleId'])) {
+    $roleid = $_SESSION['roleId'];
+}
+
+$IsAdmin = $isLoginSuccess && $roleid == $adminRole;
+
+if (isset($_SESSION['nombre'])) {
+    $nombre = $_SESSION['nombre'];
+    // Ahora $nombre contiene el valor de $_SESSION['nombre']
+}
+
+if (isset($_POST['cerrar_sesion'])) {
+    // Destruir todas las variables de sesión
+    session_unset();
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Redireccionar a una página después de cerrar la sesión (opcional)
+    header("Location: index.php"); // Reemplaza "index.php" con la página a la que deseas redireccionar.
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,17 +89,31 @@
                             <a class="nav-link active" aria-current="page" href="contacto.php">Contáctanos</a>
                         </li>
                         <!-- Verifica si el usuario es administrador antes de mostrar el enlace -->
-
                         <?php // En index.php
-                        if (isset($_GET["esAdmin"]) && $_GET["esAdmin"] === "true"): ?>
+                        if ($IsAdmin): ?>
                             <li class="nav-item"><a href="ingresarProducto.php" class="nav-link active"
-                                    aria-current="page">Ingresar Producto</a></li>
+                                    aria-current="page">Administrar</a></li>
                         <?php endif; ?>
                     </ul>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 pull-right">
+                        <?php // En index.php
+                        if (!$isLoginSuccess): ?>
+                            <li class="nav-item"><a href="login.php"> <span>Iniciar Sesión</span></a></li>
 
+                        <?php else: ?>
+                            <li class="nav-item"><small>Bienvenido
+                                    <?php echo $nombre ?>
+                                </small></li>
+                            <li class="nav-item" style="padding-left:10px;">
+                                <!-- Botón para cerrar sesión -->
+                                <form method="POST">
+                                    <input type="submit" class="btn btn-sm btn-primary" name="cerrar_sesion"
+                                        value="Cerrar Sesión">
+                                </form>
+                            </li>
 
-                    <a href="login.php"><img class="img-icon img-fluid" src="ico/person-circle.svg" alt="" /></a>
-
+                        <?php endif; ?>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -64,7 +126,7 @@
             <img class="img-fluid mt-5 fade-in-img" src="img/about us/abouts2.jpg"
                 style="width: 700px; border: 2px solid black; border-radius: 660px;" alt="">
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 sobre-nosotros mt-5 mb-5 container " >
+        <div class="col-lg-6 col-md-6 col-sm-12 sobre-nosotros mt-5 mb-5 container ">
             <h2 class="text-center">Sobre Nosotros</h2>
             <span>
                 En PetStore, nuestra pasión es cuidar y nutrir la felicidad de tus adorables compañeros peludos. Somos
@@ -112,7 +174,8 @@
         </div>
         <div class="col-md-4">
             <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-envelope vibrate" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-envelope vibrate"
+                    viewBox="0 0 16 16">
                     <path
                         d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
                 </svg>
@@ -154,13 +217,13 @@
     </div>
     <script>
         // Cuando la página se carga completamente
-        window.addEventListener("load", function() {
+        window.addEventListener("load", function () {
             // Obtén todas las imágenes con la clase 'fade-in-img'
             const images = document.querySelectorAll(".fade-in-img");
 
             // Itera a través de las imágenes y cambia su opacidad gradualmente
-            images.forEach(function(image) {
-                setTimeout(function() {
+            images.forEach(function (image) {
+                setTimeout(function () {
                     image.style.opacity = "1";
                 }, 300); // Ajusta el retraso (en milisegundos) antes de que la imagen aparezca
             });

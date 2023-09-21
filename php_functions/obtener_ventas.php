@@ -1,22 +1,21 @@
 <?php
-$host = "localhost";
-$port = 3306;
-$socket = "";
-$user = "root";
-$password = "root";
-$dbname = "pet_shop";
+include("../config.php");
 
-$con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-    or die('Could not connect to the database server' . mysqli_connect_error());
 
-//$con->close();
+// Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die('Error de conexión: ' . $conn->connect_error);
+}
+
 
 
 
 
 // Verifica la conexión
-if ($con->connect_error) {
-    die("Error en la conexión: " . $con->connect_error);
+if ($conn->connect_error) {
+    die("Error en la conexión: " . $conn->connect_error);
 }
 
 // Consulta SQL para obtener los datos de productos
@@ -26,7 +25,7 @@ INNER JOIN producto p ON v.idproducto = p.idproducto;
 
        ";
 
-$result = $con->query($sql);
+$result = $conn->query($sql);
 
 // Prepara un arreglo para almacenar los resultados
 $productos = array();
@@ -38,7 +37,7 @@ if ($result->num_rows > 0) {
 }
 
 // Cierra la conexión a la base de datos
-$con->close();
+$conn->close();
 
 // Devuelve los resultados como JSON
 echo json_encode($productos);

@@ -1,17 +1,16 @@
 <?php
 function conectarBD()
 {
-    $host = "localhost";
-    $port = 3306;
-    $socket = "";
-    $user = "root";
-    $password = "root";
-    $dbname = "pet_shop";
+    include("../config.php");
 
-    $con = new mysqli($host, $user, $password, $dbname, $port, $socket)
-        or die('Could not connect to the database server' . mysqli_connect_error());
 
-    return $con;
+    // Luego, puedes utilizar las variables de configuración en tu conexión a la base de datos
+    $conn = new mysqli($servername, $username, $password, $database);
+
+    if ($conn->connect_error) {
+        die('Error de conexión: ' . $conn->connect_error);
+    }
+    return $conn;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
