@@ -100,6 +100,7 @@ if (isset($_POST['cerrar_sesion'])) {
                 <thead>
                     <tr>
                         <th>ID Venta</th>
+                        <th>Comprador</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Total</th>
@@ -126,6 +127,7 @@ if (isset($_POST['cerrar_sesion'])) {
                 },
                 "columns": [
                     { "data": "id" },
+                    { "data": "comprador" },
                     { "data": "producto" },
                     { "data": "cantidad" },
                     { "data": "valor" },

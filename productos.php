@@ -8,7 +8,11 @@ session_start();
 
 $isLoginSuccess = false;
 $nombre = "";
-
+$email = "";
+if (isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+    // Ahora $email contiene el valor de $_SESSION['email']
+}
 if (isset($_SESSION['loginSuccess'])) {
     $isLoginSuccess = $_SESSION['loginSuccess'];
 }
@@ -39,9 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Obtener los valores de los parámetros
         $productoId = $_POST['productoId'];
         $cantidad = $_POST['cantidad'];
-
+        $nombre = "";
+        if (isset($_SESSION['nombre'])) {
+            $nombre = $_SESSION['nombre'];
+            // Ahora $nombre contiene el valor de $_SESSION['nombre']
+        }
         // Llamar a la función actualizarStock2
-        actualizarStock2($productoId, $cantidad);
+        actualizarStock2($productoId, $cantidad, $nombre);
     }
 }
 ?>
@@ -87,7 +95,7 @@ function obtenerListProducto($productiIdList)
 }
 
 // Función para actualizar el stock de productos
-function actualizarStock2($productoId, $cantidad)
+function actualizarStock2($productoId, $cantidad, $nombre)
 {
     $con = conectarBD();
 
@@ -96,9 +104,9 @@ function actualizarStock2($productoId, $cantidad)
         $con->begin_transaction();
 
         // Llamar al procedimiento almacenado que actualiza el stock e inserta en ventas
-        $sqlCallProcedure = "CALL ActualizarStockEInsertarVenta(?, ?)";
+        $sqlCallProcedure = "CALL ActualizarStockEInsertarVenta(?, ?, ?)";
         $stmtCallProcedure = $con->prepare($sqlCallProcedure);
-        $stmtCallProcedure->bind_param("ii", $productoId, $cantidad);
+        $stmtCallProcedure->bind_param("iis", $productoId, $cantidad, $nombre);
 
         if ($stmtCallProcedure->execute()) {
             // Confirmar la transacción
@@ -277,12 +285,12 @@ function obtenerStockProducto($idProducto)
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        
-                    <li class="nav-item ">
+
+                        <li class="nav-item ">
                             <a class="nav-link active" href="productos.php" aria-current="page">
                                 Productos
                             </a>
-                        </li>    
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="sobreNosotros.php">Sobre Nosotros</a>
                         </li>
@@ -368,7 +376,7 @@ function obtenerStockProducto($idProducto)
         <?php // En index.php
         if (!$isLoginSuccess): ?>
             <div class="alert alert-danger mt-4" role="alert">
-                Para poder realizar compras debe haber iniciado sesion
+                Inicia sesión para poder realizar compras!!
             </div>
         <?php endif; ?>
 
@@ -540,8 +548,10 @@ function obtenerStockProducto($idProducto)
 
                             </tbody>
                             <tfoot>
-                                <th colspan=" 4" class="text-end">Total: </th>
-                                <th class="text-end"><b><span id="totalCompraSpan"></span></b></th>
+                                <tr>
+                                    <th colspan=" 4" class="text-end">Total: </th>
+                                    <th class="text-end"><b><span id="totalCompraSpan"></span></b></th>
+                                </tr>
                             </tfoot>
                         </table>
                 </div>
@@ -683,33 +693,55 @@ function obtenerStockProducto($idProducto)
                     });
                 });
             })
-
+            //Obtener el nombre del usuario que tiene sesion iniciada
+            var nombreComprador = "<?php echo $nombre; ?>";
+            var emailComprador = "<?php echo $email; ?>";
+            var totalInCart = 0;
+            // Inicializar DataTable
             var tableFacturacion = $('#tableFacturacion').DataTable({
                 dom: 'B',
                 buttons: [
                     {
                         text: 'Descargar PDF',
                         extend: 'pdfHtml5',
-                        filename: 'Factura Compra',
-                        // Para anadir el footer al pdf de factura
+                        title: 'Factura de Compra "PetStore"',
+                        filename: 'Factura_Compra',
+                        // Personalizar el PDF
                         customize: function (doc) {
-                            // Agregar el contenido del tfoot al PDF
-                            var tfoot = $(doc.content).find('tfoot')[0];
-                            var tfootData = [];
-
-                            // Recorre las celdas del tfoot y agrega los datos al array tfootData
-                            $(tfoot).find('tr').each(function () {
-                                var rowData = [];
-                                $(this).find('th, td').each(function () {
-                                    rowData.push($(this).text());
-                                });
-                                tfootData.push(rowData);
+                            // Agregar el nombre del comprador debajo del título\
+                            doc.content.splice(1, 0, {
+                                text: 'Dueño de PetStore: Alcides Sainz Riveron \t\t RUC: 1756597983001\n',
+                                alignment: 'left',
+                                fontSize: 12
                             });
+                            doc.content.splice(2, 0, {
 
-                            // Agrega los datos del tfoot al cuerpo del PDF
-                            for (var i = 0; i < tfootData.length; i++) {
-                                doc.content[1].table.body.push(tfootData[i]);
+                                text: 'Cliente: ' + nombreComprador + '\tCorreo Electrónico: ' + emailComprador + '\n\n',
+                                alignment: 'left',
+                                fontSize: 12
+                            });
+                            doc.content.splice(3, 0, {
+                                text: 'ID | Producto | Precio | Can | Subtotal\n\n',
+                                alignment: 'left',
+                                fontSize: 12
+                            });
+                            // Obtener los datos de la tabla
+                            var tableData = tableFacturacion.buttons.exportData();
+
+                            // Calcular el total sumando los subtotales de cada fila
+                            var total = 0;
+                            for (var i = 0; i < tableData.body.length; i++) {
+                                var row = tableData.body[i];
+                                var subtotal = parseFloat(row[4].replace('$', '').trim()); // Obtener el subtotal de la columna 4
+                                total += subtotal;
                             }
+
+                            // Agregar la palabra "Total" en la columna 4 y el total en la columna 5
+                            tableData.body.push(['', '', '', 'Total:', '$' + total.toFixed(2)]);
+
+                            // Reemplazar el contenido del cuerpo de la tabla en el PDF
+                            doc.content[4].table.body = tableData.body;
+
                         }
                     }
                 ],
@@ -719,8 +751,7 @@ function obtenerStockProducto($idProducto)
                     { "targets": 0, "className": "text-end" },
                     { "targets": 3, "className": "text-end" },
                 ]
-            }
-            );
+            });
 
             $("#cartButton").click(function () {
                 var currentCartHidden = $("#currentCartHidden").val().replace(/^,/, '');

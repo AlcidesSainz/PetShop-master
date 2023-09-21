@@ -19,11 +19,9 @@ if ($conn->connect_error) {
 }
 
 // Consulta SQL para obtener los datos de productos
-$sql = "SELECT v.id, p.nombre_producto AS producto, v.cantidad, v.valor, v.fecha 
+$sql = "SELECT v.id,v.comprador, p.nombre_producto AS producto, v.cantidad, v.valor, v.fecha 
 FROM ventas v 
-INNER JOIN producto p ON v.idproducto = p.idproducto;
-
-       ";
+INNER JOIN producto p ON v.idproducto = p.idproducto;";
 
 $result = $conn->query($sql);
 
